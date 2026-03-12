@@ -1,9 +1,10 @@
-import AuthPage from "../pages/AuthPage/AuthPage";
+import AuthPage from "@/pages/AuthPage"
+import AppLayout from "./layout/AppLayout"
 
-function App() {
-    return (
-        <AuthPage />
-    );
+export default function App() {
+  return (
+    <AppLayout>
+      <AuthPage />
+    </AppLayout>
+  )
 }
-
-export default App;

@@ -1,0 +1,23 @@
+.login-form {
+  display: flex;
+  align-self: center;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+  margin: 24px auto;
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}

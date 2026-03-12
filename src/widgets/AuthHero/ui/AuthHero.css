@@ -1,0 +1,52 @@
+.auth-hero {
+  background: linear-gradient(
+    45deg,
+    #7737F6,
+    #A956E5
+  );
+  border: none;
+  border-radius: 24px;
+  padding: 32px;
+  margin: 48px 24px 0;
+}
+
+.auth-hero p {
+  margin-top: 24px;
+}
+
+.auth-hero ul {
+  margin-top: 10px;
+  padding-left: 18px;
+}
+
+.auth-hero img {
+  width: 70px;
+}
+
+.hero-ul {
+  margin-left: 20px;
+}
+
+.auth-hero img {
+  transform: scaleX(-1);
+  width: 120px;
+}
+
+@media (max-width: 768px) {
+  .auth-hero {
+    padding: 24px;
+    margin-top: 0;
+    align-items: center;
+    width: 500px;
+    max-width: 100%;
+    align-self: center;
+  }
+
+  .auth-hero h2 {
+    font-size: 22px;
+  }
+
+  .auth-hero img {
+    display: none;
+  }
+}

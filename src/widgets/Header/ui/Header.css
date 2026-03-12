@@ -1,0 +1,30 @@
+.header {
+  padding: 0 24px;
+}
+
+.logo {
+    width: 200px;
+}
+
+.contacts {
+  font-size: 20px;
+  text-decoration: none;
+  color: black;
+}
+
+.text-muted {
+    font-size: 14px;
+    color: #787878;
+    margin: 0;
+}
+
+@media (max-width: 768px) { 
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: flex-start
+    }
+
+}

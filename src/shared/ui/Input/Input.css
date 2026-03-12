@@ -1,0 +1,12 @@
+.form-control {
+    border-radius: 20px;
+    padding-left: 18px;
+}
+
+.form-control:focus {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: #6F3AE3;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(111, 58, 227, .25);
+}

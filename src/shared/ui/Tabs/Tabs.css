@@ -1,0 +1,71 @@
+.tabs {
+
+  position: relative;
+  display: inline-flex;
+  align-self: center;
+  margin: 12px;
+  padding: 4px;
+
+  border-radius: 24px;
+  border: 1px solid #6F3AE3;
+
+  background: white;
+
+  max-width: 100%;
+  overflow-x: auto;
+
+}
+
+.tab {
+
+  position: relative;
+
+  padding: 8px 18px;
+
+  border: none;
+  background: transparent;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  z-index: 2;
+
+  white-space: nowrap;
+
+  transition: color 0.2s;
+
+}
+
+.tab:hover {
+  color: #6F3AE3;
+}
+
+.tab.active {
+  color: white;
+}
+
+.tabs-indicator {
+
+  position: absolute;
+
+  top: 4px;
+  left: 0;
+
+  height: calc(100% - 8px);
+
+  border-radius: 20px;
+
+  background: linear-gradient(
+    45deg,
+    #7737F6,
+    #A956E5
+  );
+
+  transition:
+    transform 0.35s cubic-bezier(.4,0,.2,1),
+    width 0.35s cubic-bezier(.4,0,.2,1);
+
+  z-index: 1;
+
+}
