@@ -1,6 +1,5 @@
 .divider {
     width: 100%;
-    margin-bottom: 16px;
 }
 
 .footer {
@@ -43,5 +42,10 @@
     
     .footer .col-auto:last-child {
         margin-bottom: 0;
+    }
+
+    .footer .contacts {
+        text-decoration: underline;
+        color: blue;
     }
 }

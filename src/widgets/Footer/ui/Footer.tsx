@@ -3,7 +3,7 @@ import "./Footer.css";
 export default function Footer() {
     return (
         <footer>
-            <img className="divider" src="/divider.svg"></img>
+            <img className="divider mb-4 mt-4" src="/divider.svg"></img>
             <div className="footer">
 
                 <div className="row align-items-center mb-3">
@@ -13,7 +13,7 @@ export default function Footer() {
                         </a>
                     </div>
                     <div className="col-auto">
-                        <a href="tel:+79923466545" className="contacts text-decoration-none text-dark ">
+                        <a href="tel:+79923466545" className="contacts">
                             +7 992 346-65-45
                         </a>
                     </div>

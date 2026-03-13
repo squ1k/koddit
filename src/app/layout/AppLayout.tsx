@@ -5,19 +5,25 @@ import Footer from "@/widgets/Footer/ui/"
 import Container from "@/shared/ui/Container/"
 
 type AppLayoutProps = {
-  children: ReactNode
+  children: ReactNode,
+  title: string
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {
+
   return (
+
     <Container>
-        <Header />
 
-        <main className="container app-content">
-            {children}
-        </main>
+      <Header />
 
-        <Footer />
+      <main className="app-content container">
+        {children}
+      </main>
+
+      <Footer />
+
     </Container>
+
   )
 }

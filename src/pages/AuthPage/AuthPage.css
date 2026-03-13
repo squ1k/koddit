@@ -1,15 +1,13 @@
 .auth-content {
-    height: 216px;
+  height: 216px;
 }
 
 .register-info {
   padding: 24px;
 
-  background: white;
-
   border-radius: 12px;
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
   text-align: center;
   align-items: center;
 

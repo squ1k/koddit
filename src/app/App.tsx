@@ -1,10 +1,5 @@
-import AuthPage from "@/pages/AuthPage"
-import AppLayout from "./layout/AppLayout"
+import AppRouter from "./router"
 
 export default function App() {
-  return (
-    <AppLayout>
-      <AuthPage />
-    </AppLayout>
-  )
+  return <AppRouter />
 }

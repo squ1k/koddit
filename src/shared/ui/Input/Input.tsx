@@ -1,16 +1,15 @@
+import type { InputHTMLAttributes } from 'react'
+
 import './Input.css'
 
-type Props = {
-  placeholder?: string
-  type?: string
-}
+type Props = InputHTMLAttributes<HTMLInputElement>
 
-export default function Input({ placeholder, type = "text" }: Props) {
+
+export default function Input(props: Props) {
   return (
     <input
-      type={type}
-      placeholder={placeholder}
       className="form-control"
+      {...props}
     />
   )
 }

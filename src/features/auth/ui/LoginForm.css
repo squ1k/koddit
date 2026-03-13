@@ -4,8 +4,46 @@
   flex-direction: column;
   width: 100%;
   max-width: 500px;
-  margin: 24px auto;
+  margin: auto;
   animation: fadeIn 0.35s ease;
+}
+
+.form-error {
+
+  margin-top: 6px;
+
+  font-size: 13px;
+
+  color: #dc3545;
+
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-toggle {
+
+  position: absolute;
+
+  right: 10px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  border: none;
+  background: none;
+
+  font-size: 13px;
+
+  color: #6F3AE3;
+
+  cursor: pointer;
+
+}
+
+.password-toggle:hover {
+  text-decoration: underline;
 }
 
 @keyframes fadeIn {

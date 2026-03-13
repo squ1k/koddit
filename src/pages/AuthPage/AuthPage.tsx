@@ -1,16 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { setPageTitle } from "@/app/store/store";
+
 
 import AuthHero from "@/widgets/AuthHero/ui";
 import Tabs from "@/shared/ui/Tabs";
 import LoginForm from "@/features/auth/ui";
 
+import AppLayout from "@/app/layout/AppLayout";
+
 import "./AuthPage.css";
 
 export default function AuthPage() {
+
     const [tab, setTab] = useState("login");
 
+    useEffect(() => {
+        setPageTitle("Авторизация")
+    }, []);
+
     return (
-        <>
+        <AppLayout title="Логин">
             <AuthHero />
             <Tabs
                 items={[
@@ -73,6 +83,6 @@ export default function AuthPage() {
                     </div>
                 )}
             </div>
-        </>
+        </AppLayout>
     );
 }
