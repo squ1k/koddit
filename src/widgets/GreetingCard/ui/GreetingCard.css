@@ -1,0 +1,38 @@
+.greeting-card {
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 32px;
+
+  border-radius: 24px;
+
+  background: linear-gradient(
+    45deg,
+    #7737F6,
+    #A956E5
+  );
+
+  color: white;
+
+}
+
+.greeting-info h2 {
+
+  margin-bottom: 24px;
+
+}
+
+.greeting-info p {
+
+  font-size: 18px;
+  opacity: 0.9;
+
+}
+
+.greeting-emoji {
+
+    transform: scaleX(-1);
+
+}

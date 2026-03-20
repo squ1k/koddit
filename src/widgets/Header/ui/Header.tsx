@@ -8,7 +8,7 @@ export default function Header() {
     const title = usePageTitle();
 
     return (
-        <header className="mb-4">
+        <header>
             <div className="header-info d-flex justify-content-between">
                 <img src="/logo.svg" alt="Logo" className="logo"></img>
 
@@ -23,7 +23,7 @@ export default function Header() {
             {user && title && (
                 <div className="header-user mt-4">
                     <div className="d-flex">
-                        <ProfileAvatar name={user.name} />
+                        <ProfileAvatar name={user.firstName} />
 
                         <span className="user-role">{user.role}</span>
                     </div>

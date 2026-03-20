@@ -1,22 +1,34 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import AuthPage from "@/pages/AuthPage"
-import ProfilePage from "@/pages/ProfilePage"
+import AuthPage from "@/pages/AuthPage";
+import ProfilePage from "@/pages/ProfilePage";
+import StudentStatsPage from "@/pages/StudentStatsPage";
+import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
-  return (
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<AuthPage />} />
 
-    <BrowserRouter>
+                <Route
+                    path="/profile"
+                    element={
+                        <ProtectedRoute>
+                            <ProfilePage />
+                        </ProtectedRoute>
+                    }
+                />
 
-      <Routes>
-
-        <Route path="/" element={<AuthPage />} />
-
-        <Route path="/profile" element={<ProfilePage />} />
-
-      </Routes>
-
-    </BrowserRouter>
-
-  )
+                <Route
+                    path="/stats"
+                    element={
+                        <ProtectedRoute>
+                            <StudentStatsPage />
+                        </ProtectedRoute>
+                    }
+                />
+            </Routes>
+        </BrowserRouter>
+    );
 }

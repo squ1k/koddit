@@ -6,7 +6,6 @@ import Container from "@/shared/ui/Container/"
 
 type AppLayoutProps = {
   children: ReactNode,
-  title: string
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {

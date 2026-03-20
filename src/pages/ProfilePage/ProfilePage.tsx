@@ -1,24 +1,48 @@
-import { useEffect } from "react"
-import { setPageTitle } from "@/app/store/store"
+import { useEffect } from "react";
 
-import AppLayout from "@/app/layout/AppLayout"
+import { setPageTitle, useUser } from "@/app/store/store";
+import { getWelcomeData } from "@/widgets/GreetingCard/model/selectors";
+
+import AppLayout from "@/app/layout/AppLayout";
+import GreetingCard from "@/widgets/GreetingCard/ui/GreetingCard";
+import CourseList from "@/widgets/CourseList/ui";
+import "./ProfilePage.css";
 
 export default function StudentProfilePage() {
+    useEffect(() => {
+        setPageTitle("Личный кабинет");
+    }, []);
 
-  useEffect(() => {
-    setPageTitle("Личный кабинет")
-  }, [])
+    const user = useUser();
 
-  return (
+    const welcomeData = getWelcomeData(user!);
 
-    <AppLayout title="Профиль ученика">
+    return (
+        <AppLayout>
+            <div className="profile-page">
 
-      <h1>
-        Личный кабинет
-      </h1>
+                <GreetingCard
+                    name={user!.firstName}
+                    role={user!.role}
+                    activeCourses={welcomeData.activeCourses}
+                    nextLesson={welcomeData.nextLesson}
+                    childrenIds={welcomeData.childrenIds}
+                />
 
-    </AppLayout>
-
-  )
-
+                {(user!.role === "Ученик" || user!.role === "Учитель") && (
+                    <>
+                        <CourseList
+                            userId={user!.profileId}
+                            role={user!.role}
+                        />
+                        <CourseList
+                            userId={user!.profileId}
+                            role={user!.role}
+                            status="completed"
+                        />
+                    </>
+                )}
+            </div>
+        </AppLayout>
+    );
 }

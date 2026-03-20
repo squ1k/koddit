@@ -20,7 +20,7 @@ export default function AuthPage() {
     }, []);
 
     return (
-        <AppLayout title="Логин">
+        <AppLayout>
             <AuthHero />
             <Tabs
                 items={[

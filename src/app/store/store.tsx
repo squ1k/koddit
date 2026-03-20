@@ -1,11 +1,8 @@
 import { useSyncExternalStore } from "react";
 
-export type UserRole = "Ученик" | "Родитель" | "Преподаватель";
+import type { User } from "@/shared/types/user";
 
-export type User = {
-    name: string;
-    role: UserRole;
-};
+export type UserRole = User["role"];
 
 type AppState = {
     user: User | null;
@@ -30,16 +27,14 @@ export function subscribe(listener: () => void) {
 
 export function login(user: User) {
     state.user = user;
+
     notify();
 }
 
 export function logout() {
     state.user = null;
-    notify();
-}
 
-export function getUser() {
-    return state.user;
+    notify();
 }
 
 export function useUser() {
@@ -49,10 +44,6 @@ export function useUser() {
 export function setPageTitle(title: string) {
     state.pageTitle = title;
     notify();
-}
-
-export function getPageTitle() {
-    return state.pageTitle;
 }
 
 export function usePageTitle() {
