@@ -5,6 +5,7 @@ import { courses } from "@/entities/course/model/courses";
 import AppLayout from "@/app/layout/AppLayout";
 import ProfileCard from "@/widgets/ProfileCard/ui";
 import Tabs from "@/shared/ui/Tabs/Tabs";
+import { PersonalDataForm } from "@/pages/PersonalDataPage";
 import "./StudentStatsPage.css";
 
 const TAB_STATISTICS = "statistics";
@@ -66,12 +67,10 @@ export default function StudentStatsPage() {
 
                 {activeTab === TAB_STATISTICS && (
                     <div className="stats-content">
-                        {/* Active Courses */}
                         <div className="stats-section">
                             <h3>Активных курсов: {activeCourses.length}</h3>
                         </div>
 
-                        {/* Time on Platform */}
                         <div className="stats-section">
                             <h3>Время на платформе:</h3>
                             <p className="time-on-platform">
@@ -79,7 +78,6 @@ export default function StudentStatsPage() {
                             </p>
                         </div>
 
-                        {/* Progress by Courses */}
                         <div className="stats-section">
                             <h3>Прогрессы по курсам</h3>
                             <div className="progress-list">
@@ -114,7 +112,6 @@ export default function StudentStatsPage() {
                             </div>
                         </div>
 
-                        {/* Percentage of Correct Answers */}
                         <div className="stats-section">
                             <h3>Процент правильных решений</h3>
                             <div className="progress-list">
@@ -149,7 +146,6 @@ export default function StudentStatsPage() {
                             </div>
                         </div>
 
-                        {/* Completed Courses */}
                         <div className="stats-section">
                             <h3>Завершенные курсы</h3>
                             <div className="completed-courses">
@@ -183,7 +179,6 @@ export default function StudentStatsPage() {
                             </div>
                         </div>
 
-                        {/* Certificates */}
                         <div className="stats-section">
                             <h3>Сертификаты</h3>
                             <div className="certificates-grid">
@@ -231,9 +226,7 @@ export default function StudentStatsPage() {
 
                 {activeTab === TAB_PERSONAL_DATA && (
                     <div className="stats-content">
-                        <p className="placeholder">
-                            Раздел "Личные данные" находится в разработке
-                        </p>
+                        <PersonalDataForm />
                     </div>
                 )}
             </div>

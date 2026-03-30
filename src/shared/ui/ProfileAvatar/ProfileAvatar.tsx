@@ -7,7 +7,7 @@ type Props = {
 
 export default function ProfileAvatar({ name }: Props) {
     return (
-        <Link to="/profile" className="profile-avatar">
+        <Link to="/stats" className="profile-avatar">
             {name.charAt(0).toUpperCase()}
         </Link>
     );

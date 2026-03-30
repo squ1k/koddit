@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthPage from "@/pages/AuthPage";
 import ProfilePage from "@/pages/ProfilePage";
 import StudentStatsPage from "@/pages/StudentStatsPage";
+import PersonalDataPage from "@/pages/PersonalDataPage";
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
@@ -25,6 +26,15 @@ export default function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <StudentStatsPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/profile/personal"
+                    element={
+                        <ProtectedRoute>
+                            <PersonalDataPage />
                         </ProtectedRoute>
                     }
                 />
