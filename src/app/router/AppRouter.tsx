@@ -4,6 +4,7 @@ import AuthPage from "@/pages/AuthPage";
 import ProfilePage from "@/pages/ProfilePage";
 import StudentStatsPage from "@/pages/StudentStatsPage";
 import PersonalDataPage from "@/pages/PersonalDataPage";
+import WalletTopUpPage from "@/pages/WalletTopUpPage";
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
@@ -35,6 +36,15 @@ export default function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <PersonalDataPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/wallet/topup"
+                    element={
+                        <ProtectedRoute>
+                            <WalletTopUpPage />
                         </ProtectedRoute>
                     }
                 />

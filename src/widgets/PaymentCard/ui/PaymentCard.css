@@ -1,0 +1,79 @@
+.payment-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-width: 280px;
+}
+
+.payment-header {
+    margin-bottom: 16px;
+}
+
+.payment-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.payment-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.balance-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.balance-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+}
+
+.balance-amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: #5e63ff;
+}
+
+.topup-button {
+    padding: 12px 16px;
+    background: #5e63ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.topup-button:hover {
+    background: #4c51e0;
+}
+
+.topup-button:active {
+    background: #3c40c0;
+}
+
+.payment-info {
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+}
+
+.info-text {
+    margin: 0;
+    font-size: 12px;
+    color: #999;
+    text-align: center;
+}

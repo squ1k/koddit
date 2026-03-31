@@ -3,3 +3,30 @@
     flex-direction: column;
     gap: 24px;
 }
+
+.profile-main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+@media (max-width: 768px) {
+    .profile-page {
+        gap: 16px;
+    }
+
+    .profile-main {
+        gap: 16px;
+    }
+
+    .profile-sidebar {
+        gap: 16px;
+    }
+}
+

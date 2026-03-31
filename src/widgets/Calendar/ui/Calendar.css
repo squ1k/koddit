@@ -1,0 +1,120 @@
+.calendar-widget {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-width: 280px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.calendar-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.calendar-month-title {
+    text-align: center;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 12px;
+    font-size: 14px;
+    text-transform: capitalize;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.weekday {
+    text-align: center;
+    font-weight: 600;
+    font-size: 12px;
+    color: #999;
+    padding: 8px 0;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 20px;
+}
+
+.calendar-day,
+.calendar-empty {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #1a1a1a;
+}
+
+.calendar-empty {
+    background: transparent;
+}
+
+.calendar-day {
+    background: #f5f5f5;
+    cursor: default;
+    transition: background-color 0.2s;
+}
+
+.calendar-day.has-lesson {
+    background: #5e63ff;
+    color: white;
+    font-weight: 600;
+}
+
+.lessons-list {
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+}
+
+.lessons-list h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.lessons-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.lessons-list li {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    align-items: flex-start;
+}
+
+.lessons-list li:last-child {
+    margin-bottom: 0;
+}
+
+.lesson-date {
+    color: #5e63ff;
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 65px;
+}
+
+.lesson-info {
+    color: #666;
+}
