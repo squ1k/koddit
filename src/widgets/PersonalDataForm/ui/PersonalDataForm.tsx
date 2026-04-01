@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { useUser, logout } from "@/app/store/store";
 import Input from "@/shared/ui/Input/Input";
 import Button from "@/shared/ui/Button/Button";

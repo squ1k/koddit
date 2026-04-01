@@ -1,4 +1,5 @@
 import { type CourseListItem } from "@/widgets/CourseList/model/selectors";
+import { Link } from "react-router-dom";
 
 import "./CourseCard.css";
 
@@ -11,7 +12,7 @@ export default function CourseCard({ course, hideProgress }: Props) {
     const progress = hideProgress ? undefined : course.progress;
 
     return (
-        <div className="course-card">
+        <Link to={`/course/${course.courseId}`} className="course-card">
             <div className="course-card__header">
                 <div className="course-card__icon" aria-hidden>
                     🎮
@@ -49,6 +50,6 @@ export default function CourseCard({ course, hideProgress }: Props) {
                     💬
                 </button>
             </div>
-        </div>
+        </Link>
     );
 }
