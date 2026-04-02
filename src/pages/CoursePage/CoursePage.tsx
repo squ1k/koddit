@@ -21,6 +21,18 @@ export default function CoursePage() {
 
     const [activeTab, setActiveTab] = useState(TAB_CONTENT);
 
+    const course = courses.find((c) => c.id === courseId);
+
+    const courseModules = useMemo(
+        () =>
+            courseId && course
+                ? modules
+                      .filter((m) => m.courseId === courseId)
+                      .sort((a, b) => a.order - b.order)
+                : [],
+        [courseId, course],
+    );
+
     useEffect(() => {
         if (courseId) {
             const found = courses.find((c) => c.id === courseId);
@@ -32,8 +44,6 @@ export default function CoursePage() {
         return null;
     }
 
-    const course = courses.find((c) => c.id === courseId);
-
     if (!course) {
         return (
             <AppLayout>
@@ -43,14 +53,6 @@ export default function CoursePage() {
     }
 
     const teacher = users.find((u) => u.profileId === course.teacherId);
-
-    const courseModules = useMemo(
-        () =>
-            modules
-                .filter((m) => m.courseId === courseId)
-                .sort((a, b) => a.order - b.order),
-        [courseId],
-    );
 
     const courseEnrollment = enrollments.find(
         (e) => e.courseId === courseId && e.studentId === user.profileId,
@@ -77,16 +79,51 @@ export default function CoursePage() {
                     </Link>
 
                     <div className="course-page__title-block">
-                        <h1 className="course-page__title">{course.title}</h1>
+                        <div className="course-page__title-row">
+                            <h1 className="course-page__title">
+                                {course.title}
+                            </h1>
+
+                            <div className="course-page__actions">
+                                <button
+                                    type="button"
+                                    className="course-page__icon-btn"
+                                    aria-label="Уведомления"
+                                >
+                                    🔔
+                                </button>
+                                <button
+                                    type="button"
+                                    className="course-page__icon-btn"
+                                    aria-label="Чат"
+                                >
+                                    💬
+                                </button>
+                                <span
+                                    className={`course-page__course-status ${
+                                        courseEnrollment?.status === "active"
+                                            ? "course-page__course-status--active"
+                                            : "course-page__course-status--inactive"
+                                    }`}
+                                >
+                                    {courseEnrollment
+                                        ? courseEnrollment.status === "active"
+                                            ? "Активный"
+                                            : courseEnrollment.status
+                                        : "Не записан"}
+                                </span>
+                            </div>
+                        </div>
+
                         <div className="course-page__meta">
                             <span>{course.lessonsCount} занятий</span>
                             <span>{courseModules.length} модулей</span>
-                            <span>
-                                Преподаватель:{" "}
-                                {teacher
-                                    ? `${teacher.firstName} ${teacher.lastName}`
-                                    : "невідомо"}
-                            </span>
+                        </div>
+                        <div className="course-page__teacher">
+                            Преподаватель:{" "}
+                            {teacher
+                                ? `${teacher.firstName} ${teacher.lastName}`
+                                : "невідомо"}
                         </div>
                     </div>
                 </div>

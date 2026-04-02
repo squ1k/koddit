@@ -18,7 +18,7 @@ export default function CourseList({
     status = "active",
     title,
 }: Props) {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(true);
 
     const courses = useMemo(() => {
         return getCourseItems(role, userId, status);
