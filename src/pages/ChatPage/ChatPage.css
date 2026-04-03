@@ -1,0 +1,35 @@
+.chat-page {
+    min-height: 100vh;
+    background: #f5f5f5;
+}
+
+.chat-page__container {
+    display: flex;
+    height: calc(100vh - 60px);
+    background: #fff;
+}
+
+.chat-page__empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e9e9e9 100%);
+    color: #999;
+    font-size: 18px;
+}
+
+.chat-page__no-selection {
+    text-align: center;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .chat-page__container {
+        flex-direction: column;
+    }
+
+    .chat-page__empty {
+        height: 100%;
+    }
+}

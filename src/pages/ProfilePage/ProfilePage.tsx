@@ -1,8 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { setPageTitle, useUser } from "@/app/store/store";
 import { getWelcomeData } from "@/widgets/GreetingCard/model/selectors";
 import { students } from "@/entities/student/model/students";
+import { getUserChats } from "@/shared/api/chatApi";
+import ChatListDropdown from "./ui/ChatListDropdown";
 
 import AppLayout from "@/app/layout/AppLayout";
 import GreetingCard from "@/widgets/GreetingCard/ui/GreetingCard";
@@ -17,6 +20,12 @@ export default function StudentProfilePage() {
     }, []);
 
     const user = useUser();
+    const navigate = useNavigate();
+
+    const userChats = useMemo(() => {
+        if (!user) return [];
+        return getUserChats(user.id);
+    }, [user]);
 
     if (!user) {
         return null;
@@ -49,6 +58,13 @@ export default function StudentProfilePage() {
                                 userId={user.profileId}
                                 role={user.role}
                                 status="completed"
+                            />
+                            <ChatListDropdown
+                                chats={userChats}
+                                currentUserId={user.id}
+                                onSelectChat={(chatId) =>
+                                    navigate(`/chat/${chatId}`)
+                                }
                             />
                         </>
                     )}

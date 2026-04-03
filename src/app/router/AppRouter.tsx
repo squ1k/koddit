@@ -6,6 +6,7 @@ import StudentStatsPage from "@/pages/StudentStatsPage";
 import PersonalDataPage from "@/pages/PersonalDataPage";
 import WalletTopUpPage from "@/pages/WalletTopUpPage";
 import CoursePage from "@/pages/CoursePage";
+import ChatPage from "@/pages/ChatPage";
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
@@ -55,6 +56,24 @@ export default function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <WalletTopUpPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/chat"
+                    element={
+                        <ProtectedRoute>
+                            <ChatPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/chat/:chatId"
+                    element={
+                        <ProtectedRoute>
+                            <ChatPage />
                         </ProtectedRoute>
                     }
                 />

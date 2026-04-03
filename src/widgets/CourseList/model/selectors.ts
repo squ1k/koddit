@@ -11,6 +11,7 @@ export type CourseListItem = {
   schedule: { day: string; time: string }[];
   progress?: number;
   enrollmentId?: string;
+  teacherId?: string;
 };
 
 export function getCourseItems(
@@ -32,6 +33,7 @@ export function getCourseItems(
           title: course.title,
           lessonsCount: course.lessonsCount,
           schedule: course.schedule,
+          teacherId: course.teacherId,
         };
 
         if (typeof progress === "number") {
@@ -52,6 +54,7 @@ export function getCourseItems(
         title: c.title,
         lessonsCount: c.lessonsCount,
         schedule: c.schedule,
+        teacherId: c.teacherId,
       }));
     }
 

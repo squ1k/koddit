@@ -4,4 +4,10 @@ export interface Chat {
 
   participants: string[]
 
+  lastMessage?: string
+
+  lastMessageTime?: string
+
+  lastSenderId?: string
+
 }

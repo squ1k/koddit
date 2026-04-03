@@ -2,6 +2,25 @@
     width: 200px;
 }
 
+.logo-link {
+    display: inline-flex;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    text-decoration: none;
+    border: none;
+    padding: 0;
+    background: none;
+}
+
+.logo-link:hover {
+    opacity: 0.8;
+}
+
+.logo-link:focus-visible {
+    outline: 2px solid #6F3AE3;
+    border-radius: 4px;
+}
+
 .contacts {
   font-size: 20px;
   text-decoration: none;

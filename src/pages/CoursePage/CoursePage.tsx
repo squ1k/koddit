@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 import AppLayout from "@/app/layout/AppLayout";
 import { useUser } from "@/app/store/store";
@@ -8,6 +8,7 @@ import { modules } from "@/entities/courseModule/model/courseModules";
 import { enrollments } from "@/entities/enrollment/model/enrollments";
 import { courseProgress } from "@/entities/progress/model/courseProgress";
 import { users } from "@/entities/user/model/users";
+import { getChatBetweenUsers } from "@/entities/chat/model/selectors";
 import Tabs from "@/shared/ui/Tabs/Tabs";
 import { StatsSection } from "@/widgets/StatsContent";
 import "./CoursePage.css";
@@ -18,6 +19,7 @@ const TAB_STATISTICS = "statistics";
 export default function CoursePage() {
     const user = useUser();
     const { courseId } = useParams<{ courseId: string }>();
+    const navigate = useNavigate();
 
     const [activeTab, setActiveTab] = useState(TAB_CONTENT);
 
@@ -70,6 +72,15 @@ export default function CoursePage() {
         { label: "Статистика", value: TAB_STATISTICS },
     ];
 
+    const handleOpenChat = () => {
+        if (user && teacher) {
+            const chat = getChatBetweenUsers(user.id, teacher.id);
+            if (chat) {
+                navigate(`/chat/${chat.id}`);
+            }
+        }
+    };
+
     return (
         <AppLayout>
             <div className="course-page">
@@ -87,6 +98,7 @@ export default function CoursePage() {
                             <div className="course-page__actions">
                                 <button
                                     type="button"
+                                    onClick={handleOpenChat}
                                     className="course-page__icon-btn"
                                     aria-label="Уведомления"
                                 >

@@ -1,4 +1,5 @@
 import { usePageTitle, useUser } from "@/app/store/store";
+import { Link } from "react-router-dom";
 
 import "./Header.css";
 import ProfileAvatar from "@/shared/ui/ProfileAvatar/ProfileAvatar";
@@ -10,7 +11,9 @@ export default function Header() {
     return (
         <header>
             <div className="header-info d-flex justify-content-between">
-                <img src="/logo.svg" alt="Logo" className="logo"></img>
+                <Link to="/profile" className="logo-link">
+                    <img src="/logo.svg" alt="Logo" className="logo"></img>
+                </Link>
 
                 <div>
                     <a href="tel:+7 992 346-65-45" className="contacts">
