@@ -7,8 +7,8 @@ import type { User } from "@/shared/types/user";
 import { chats } from "@/entities/chat/model/chats";
 import { messages } from "@/entities/message/model/messages";
 import { users } from "@/entities/user/model/users";
-import ChatList from "./ui/ChatList";
-import ChatView from "./ui/ChatView";
+import ChatList from "./ui/ChatList.tsx";
+import ChatView from "./ui/ChatView.tsx";
 import "./ChatPage.css";
 
 export default function ChatPage() {
