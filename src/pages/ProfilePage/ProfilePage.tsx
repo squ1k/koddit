@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { setPageTitle, useUser } from "@/app/store/store";
 import { getWelcomeData } from "@/widgets/GreetingCard/model/selectors";
 import { students } from "@/entities/student/model/students";
+import { courses } from "@/entities/course/model/courses";
+import { enrollments } from "@/entities/enrollment/model/enrollments";
 import { getUserChats } from "@/shared/api/chatApi";
 import ChatListDropdown from "./ui/ChatListDropdown";
 
@@ -35,6 +37,68 @@ export default function StudentProfilePage() {
 
     const currentStudent = students.find((s) => s.id === user.profileId);
     const balance = currentStudent?.balance ?? 0;
+
+    const studentEnrollments = useMemo(
+        () =>
+            currentStudent
+                ? enrollments.filter((e) => e.studentId === currentStudent.id)
+                : [],
+        [currentStudent],
+    );
+
+    const activeEnrollments = studentEnrollments.filter(
+        (enrollment) => enrollment.status === "active",
+    );
+
+    const paidCoursesCount = studentEnrollments.filter(
+        (enrollment) => enrollment.paid !== false,
+    ).length;
+    const unpaidCoursesCount = studentEnrollments.filter(
+        (enrollment) => enrollment.paid === false,
+    ).length;
+
+    const scheduleLessons = useMemo(() => {
+        const dayIndexMap: Record<string, number> = {
+            Понедельник: 1,
+            Вторник: 2,
+            Среда: 3,
+            Четверг: 4,
+            Пятница: 5,
+            Суббота: 6,
+            Воскресенье: 0,
+        };
+
+        const today = new Date();
+        const currentDay = today.getDay();
+
+        const getNextDateForWeekday = (weekday: string) => {
+            const targetDay = dayIndexMap[weekday];
+            if (targetDay === undefined) {
+                return new Date(today);
+            }
+
+            const delta = (targetDay - currentDay + 7) % 7;
+            const result = new Date(today);
+            result.setDate(today.getDate() + (delta === 0 ? 0 : delta));
+            return result;
+        };
+
+        return activeEnrollments
+            .flatMap((enrollment) => {
+                const course = courses.find(
+                    (c) => c.id === enrollment.courseId,
+                );
+                if (!course) return [];
+
+                return course.schedule.map((scheduleItem, index) => ({
+                    id: `${enrollment.id}-${index}`,
+                    courseTitle: course.title,
+                    lessonTitle: `${scheduleItem.day}, ${scheduleItem.time}`,
+                    date: getNextDateForWeekday(scheduleItem.day),
+                }));
+            })
+            .sort((a, b) => a.date.getTime() - b.date.getTime());
+    }, [activeEnrollments]);
 
     return (
         <AppLayout>
@@ -72,8 +136,12 @@ export default function StudentProfilePage() {
 
                 {user.role === "Ученик" && (
                     <div className="profile-sidebar">
-                        <Calendar lessons={[]} />
-                        <PaymentCard balance={balance} />
+                        <Calendar lessons={scheduleLessons} />
+                        <PaymentCard
+                            balance={balance}
+                            paidCoursesCount={paidCoursesCount}
+                            unpaidCoursesCount={unpaidCoursesCount}
+                        />
                     </div>
                 )}
             </div>

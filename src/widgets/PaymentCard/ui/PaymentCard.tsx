@@ -3,9 +3,15 @@ import "./PaymentCard.css";
 
 interface Props {
     balance: number;
+    paidCoursesCount?: number;
+    unpaidCoursesCount?: number;
 }
 
-export default function PaymentCard({ balance = 0 }: Props) {
+export default function PaymentCard({
+    balance = 0,
+    paidCoursesCount = 0,
+    unpaidCoursesCount = 0,
+}: Props) {
     const navigate = useNavigate();
 
     const handleTopUp = () => {
@@ -24,6 +30,17 @@ export default function PaymentCard({ balance = 0 }: Props) {
                     <span className="balance-amount">{balance}₽</span>
                 </div>
 
+                <div className="payment-summary">
+                    <div className="payment-summary__item">
+                        <span>Курсов оплачено</span>
+                        <strong>{paidCoursesCount}</strong>
+                    </div>
+                    <div className="payment-summary__item payment-summary__item--unpaid">
+                        <span>Курсов не оплачено</span>
+                        <strong>{unpaidCoursesCount}</strong>
+                    </div>
+                </div>
+
                 <button
                     className="topup-button"
                     onClick={handleTopUp}
@@ -35,7 +52,9 @@ export default function PaymentCard({ balance = 0 }: Props) {
 
             <div className="payment-info">
                 <p className="info-text">
-                    Пополните свой счет для оплаты курсов и услуг
+                    {unpaidCoursesCount > 0
+                        ? `У вас ${unpaidCoursesCount} неоплаченных курсов. Пополните счет для доступа к занятиям.`
+                        : "Пополните свой счет для оплаты курсов и услуг"}
                 </p>
             </div>
         </div>

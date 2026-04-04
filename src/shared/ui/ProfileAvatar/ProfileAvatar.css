@@ -1,4 +1,4 @@
-.profile-avatar {
+a.profile-avatar {
 
   width: 39px;
   height: 39px;
@@ -28,7 +28,7 @@
 
 }
 
-.profile-avatar:hover {
+a.profile-avatar:hover {
 
   transform: translateY(-1px);
 
