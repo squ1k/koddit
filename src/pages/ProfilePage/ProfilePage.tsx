@@ -29,14 +29,11 @@ export default function StudentProfilePage() {
         return getUserChats(user.id);
     }, [user]);
 
-    if (!user) {
-        return null;
-    }
-
-    const welcomeData = getWelcomeData(user);
-
-    const currentStudent = students.find((s) => s.id === user.profileId);
-    const balance = currentStudent?.balance ?? 0;
+    const currentStudent = useMemo(
+        () =>
+            user ? students.find((s) => s.id === user.profileId) : undefined,
+        [user],
+    );
 
     const studentEnrollments = useMemo(
         () =>
@@ -46,16 +43,27 @@ export default function StudentProfilePage() {
         [currentStudent],
     );
 
-    const activeEnrollments = studentEnrollments.filter(
-        (enrollment) => enrollment.status === "active",
+    const activeEnrollments = useMemo(
+        () =>
+            studentEnrollments.filter(
+                (enrollment) => enrollment.status === "active",
+            ),
+        [studentEnrollments],
     );
 
-    const paidCoursesCount = studentEnrollments.filter(
-        (enrollment) => enrollment.paid !== false,
-    ).length;
-    const unpaidCoursesCount = studentEnrollments.filter(
-        (enrollment) => enrollment.paid === false,
-    ).length;
+    const paidCoursesCount = useMemo(
+        () =>
+            studentEnrollments.filter((enrollment) => enrollment.paid !== false)
+                .length,
+        [studentEnrollments],
+    );
+
+    const unpaidCoursesCount = useMemo(
+        () =>
+            studentEnrollments.filter((enrollment) => enrollment.paid === false)
+                .length,
+        [studentEnrollments],
+    );
 
     const scheduleLessons = useMemo(() => {
         const dayIndexMap: Record<string, number> = {
@@ -99,6 +107,13 @@ export default function StudentProfilePage() {
             })
             .sort((a, b) => a.date.getTime() - b.date.getTime());
     }, [activeEnrollments]);
+
+    if (!user) {
+        return null;
+    }
+
+    const welcomeData = getWelcomeData(user);
+    const balance = currentStudent?.balance ?? 0;
 
     return (
         <AppLayout>

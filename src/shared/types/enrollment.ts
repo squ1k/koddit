@@ -8,4 +8,6 @@ export interface Enrollment {
 
   status: "active" | "completed"
 
+  paid?: boolean
+
 }
