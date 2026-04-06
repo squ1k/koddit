@@ -104,7 +104,9 @@ export default function StudentStatsPage() {
 
                 {activeTab === TAB_PERSONAL_DATA && (
                     <div className="stats-content">
-                        <PersonalDataForm />
+                        <StatsSection title="">
+                            <PersonalDataForm />
+                        </StatsSection>
                     </div>
                 )}
             </div>

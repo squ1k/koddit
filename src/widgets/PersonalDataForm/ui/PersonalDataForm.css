@@ -2,12 +2,18 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
 }
 
 .personal-data-form h2 {
   margin: 0;
   font-size: 20px;
+  font-weight: 600;
   color: #1a1a1a;
+}
+
+.personal-data-form h2:not(:first-of-type) {
+  margin-top: 30px;
 }
 
 .form-row {
@@ -32,6 +38,13 @@
   display: flex;
   gap: 12px;
   margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.actions-row .btn {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
 }
 
 .save-feedback {

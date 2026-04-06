@@ -3,7 +3,7 @@
     flex: 1;
     min-height: 0;
     width: 100%;
-    background: #f5f5f5;
+    background: #F4F7FC;
     overflow-x: hidden;
 }
 
@@ -12,7 +12,7 @@
     flex: 1;
     min-height: 0;
     width: 100%;
-    background: #fff;
+    background: transparent;
 }
 
 .chat-page__empty {
@@ -20,14 +20,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #f5f5f5 0%, #e9e9e9 100%);
-    color: #999;
+    background: linear-gradient(135deg, #F4F7FC 0%, #EEF2FF 100%);
+    color: #666;
     font-size: 18px;
 }
 
 .chat-page__no-selection {
     text-align: center;
-    color: #666;
+    color: #4a4a4a;
 }
 
 @media (max-width: 768px) {
