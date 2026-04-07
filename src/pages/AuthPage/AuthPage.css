@@ -1,12 +1,10 @@
 .register-info {
   padding: 24px;
-
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   text-align: center;
   align-items: center;
-
   animation: fadeIn 0.35s ease;
 }
 
@@ -15,27 +13,19 @@
 }
 
 .register-phone {
-
   margin-top: 8px;
-
   font-weight: 600;
-
   color: #6F3AE3;
-
   font-size: 18px;
-
 }
 
 @keyframes fadeIn {
-
   from {
     opacity: 0;
     transform: translateY(8px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
-
 }
