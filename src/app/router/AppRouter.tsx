@@ -7,6 +7,9 @@ import PersonalDataPage from "@/pages/PersonalDataPage";
 import WalletTopUpPage from "@/pages/WalletTopUpPage";
 import CoursePage from "@/pages/CoursePage";
 import ChatPage from "@/pages/ChatPage";
+import AdminPage from "@/pages/AdminPage";
+import AdminCreateUserPage from "@/pages/AdminPage/CreateUserPage";
+import AdminEnrollUserPage from "@/pages/AdminPage/EnrollUserPage";
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
@@ -20,6 +23,33 @@ export default function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <ProfilePage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin"
+                    element={
+                        <ProtectedRoute>
+                            <AdminPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/create-user"
+                    element={
+                        <ProtectedRoute>
+                            <AdminCreateUserPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/enroll-user"
+                    element={
+                        <ProtectedRoute>
+                            <AdminEnrollUserPage />
                         </ProtectedRoute>
                     }
                 />

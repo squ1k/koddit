@@ -1,4 +1,6 @@
-export const students = [
+import type { Student } from "@/shared/types/student";
+
+export const students: Student[] = [
 
   {
     id: "s1",
@@ -14,4 +16,8 @@ export const students = [
     parentId: "p2"
   }
 
-]
+];
+
+export function addStudent(student: Student) {
+  students.push(student);
+}

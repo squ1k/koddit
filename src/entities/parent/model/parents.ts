@@ -1,4 +1,6 @@
-export const parents = [
+import type { Parent } from "@/shared/types/parent";
+
+export const parents: Parent[] = [
 
   {
     id: "p1",
@@ -10,4 +12,8 @@ export const parents = [
     childrenIds: ["s2"]
   }
 
-]
+];
+
+export function addParent(parent: Parent) {
+  parents.push(parent);
+}

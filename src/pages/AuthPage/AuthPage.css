@@ -19,6 +19,30 @@
   font-size: 18px;
 }
 
+.login-hints {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #f6f3ff;
+  animation: fadeIn 0.35s ease;
+}
+
+.login-hints h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.login-hints ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #333;
+}
+
+.login-hints li {
+  margin-bottom: 8px;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

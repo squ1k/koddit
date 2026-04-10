@@ -1,4 +1,6 @@
-export const enrollments = [
+import type { Enrollment } from "@/shared/types/enrollment";
+
+export const enrollments: Enrollment[] = [
 
   {
     id: "e1",
@@ -32,4 +34,8 @@ export const enrollments = [
     paid: true
   }
 
-]
+];
+
+export function addEnrollment(enrollment: Enrollment) {
+  enrollments.push(enrollment);
+}

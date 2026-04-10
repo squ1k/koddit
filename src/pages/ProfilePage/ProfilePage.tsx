@@ -14,9 +14,10 @@ import GreetingCard from "@/widgets/GreetingCard/ui/GreetingCard";
 import CourseList from "@/widgets/CourseList/ui";
 import Calendar from "@/widgets/Calendar";
 import PaymentCard from "@/widgets/PaymentCard";
+import AdminPage from "@/pages/AdminPage";
 import "./ProfilePage.css";
 
-export default function StudentProfilePage() {
+function StudentProfilePage() {
     useEffect(() => {
         setPageTitle("Личный кабинет");
     }, []);
@@ -162,4 +163,18 @@ export default function StudentProfilePage() {
             </div>
         </AppLayout>
     );
+}
+
+export default function ProfilePage() {
+    const user = useUser();
+
+    if (!user) {
+        return null;
+    }
+
+    if (user.role === "Администратор") {
+        return <AdminPage />;
+    }
+
+    return <StudentProfilePage />;
 }

@@ -1,4 +1,6 @@
-export const users = [
+import type { User } from "@/shared/types/user";
+
+export const users: User[] = [
 
   {
     id: "u1",
@@ -88,6 +90,55 @@ export const users = [
     telegram: "@anna",
 
     password: "teach123"
+  },
+
+  {
+    id: "u7",
+    role: "Администратор",
+    profileId: "a1",
+
+    firstName: "Иван",
+    lastName: "Соколов",
+
+    phone: "+7 999 777-00-01",
+    email: "admin@mail.ru",
+    telegram: "@admin",
+
+    password: "admin123"
   }
 
-]
+];
+
+const rolePrefixMap: Record<User["role"], string> = {
+  Ученик: "s",
+  Родитель: "p",
+  Учитель: "t",
+  Администратор: "a",
+};
+
+export function generateUserId() {
+  const usedIds = new Set(users.map((user) => user.id));
+  let nextIndex = users.length + 1;
+
+  while (usedIds.has(`u${nextIndex}`)) {
+    nextIndex += 1;
+  }
+
+  return `u${nextIndex}`;
+}
+
+export function generateProfileId(role: User["role"]) {
+  const prefix = rolePrefixMap[role];
+  const usedIds = new Set(users.map((user) => user.profileId));
+  let nextIndex = 1;
+
+  while (usedIds.has(`${prefix}${nextIndex}`)) {
+    nextIndex += 1;
+  }
+
+  return `${prefix}${nextIndex}`;
+}
+
+export function addUser(user: User) {
+  users.push(user);
+}
