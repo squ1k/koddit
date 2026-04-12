@@ -10,6 +10,7 @@ import ChatPage from "@/pages/ChatPage";
 import AdminPage from "@/pages/AdminPage";
 import AdminCreateUserPage from "@/pages/AdminPage/CreateUserPage";
 import AdminEnrollUserPage from "@/pages/AdminPage/EnrollUserPage";
+import SchedulePage from "@/pages/SchedulePage";
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
@@ -95,6 +96,15 @@ export default function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <ChatPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/schedule"
+                    element={
+                        <ProtectedRoute>
+                            <SchedulePage />
                         </ProtectedRoute>
                     }
                 />

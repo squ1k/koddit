@@ -14,6 +14,7 @@ import GreetingCard from "@/widgets/GreetingCard/ui/GreetingCard";
 import CourseList from "@/widgets/CourseList/ui";
 import Calendar from "@/widgets/Calendar";
 import PaymentCard from "@/widgets/PaymentCard";
+import ChildrenList from "@/widgets/ChildrenList";
 import AdminPage from "@/pages/AdminPage";
 import "./ProfilePage.css";
 
@@ -147,6 +148,12 @@ function StudentProfilePage() {
                                 }
                             />
                         </>
+                    )}
+
+                    {user.role === "Родитель" && (
+                        <ChildrenList
+                            childrenIds={welcomeData.childrenIds || []}
+                        />
                     )}
                 </div>
 

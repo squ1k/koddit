@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { setPageTitle } from "@/app/store/store";
+import { setPageTitle, useUser } from "@/app/store/store";
+import { students } from "@/entities/student/model/students";
+import { users } from "@/entities/user/model/users";
+import { getParentChildrenIdsByParentId } from "@/entities/parent/model/selectors";
 import AppLayout from "@/app/layout/AppLayout";
 import "./WalletTopUpPage.css";
 
@@ -8,6 +12,8 @@ type PaymentMethod = "card" | "sbp" | "sberpay";
 
 export default function WalletTopUpPage() {
     const navigate = useNavigate();
+    const user = useUser();
+    const [searchParams] = useSearchParams();
     const [amount, setAmount] = useState<string>("");
     const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("card");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,6 +21,32 @@ export default function WalletTopUpPage() {
     useEffect(() => {
         setPageTitle("Пополнение счёта");
     }, []);
+
+    if (!user) {
+        return null;
+    }
+
+    const studentId = searchParams.get("studentId") || user.profileId;
+
+    // Check permissions
+    if (studentId !== user.profileId) {
+        if (user.role === "Родитель") {
+            const childrenIds = getParentChildrenIdsByParentId(user.profileId);
+            if (!childrenIds.includes(studentId)) {
+                return <div>Доступ запрещен</div>;
+            }
+        } else {
+            return <div>Доступ запрещен</div>;
+        }
+    }
+
+    const studentUser = users.find(
+        (u) => u.profileId === studentId && u.role === "Ученик",
+    );
+
+    if (!studentUser) {
+        return <div>Студент не найден</div>;
+    }
 
     const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/[^\d]/g, "");
@@ -33,7 +65,7 @@ export default function WalletTopUpPage() {
 
         setTimeout(() => {
             alert(
-                `Платеж на сумму ${amount}₽ через ${getPaymentMethodName(selectedMethod)} успешно обработан!`,
+                `Платеж на сумму ${amount}₽ через ${getPaymentMethodName(selectedMethod)} для ${studentUser.firstName} ${studentUser.lastName} успешно обработан!`,
             );
             setIsSubmitting(false);
             navigate("/profile");
@@ -63,7 +95,8 @@ export default function WalletTopUpPage() {
 
                     <div className="topup-card">
                         <h1 className="topup-title">
-                            Введите сумму пополнения
+                            Пополнение счёта {studentUser.firstName}{" "}
+                            {studentUser.lastName}
                         </h1>
 
                         <form onSubmit={handleSubmit}>

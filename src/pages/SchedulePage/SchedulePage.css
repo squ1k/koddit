@@ -1,0 +1,8 @@
+.schedule-page {
+    padding: 2rem;
+}
+
+.schedule-page h2 {
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+}

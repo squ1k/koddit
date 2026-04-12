@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useUser } from "@/app/store/store";
 import { enrollments } from "@/entities/enrollment/model/enrollments";
 import { courses } from "@/entities/course/model/courses";
+import { students } from "@/entities/student/model/students";
+import { users } from "@/entities/user/model/users";
+import { getParentChildrenIdsByParentId } from "@/entities/parent/model/selectors";
 import AppLayout from "@/app/layout/AppLayout";
 import ProfileCard from "@/widgets/ProfileCard/ui";
 import Tabs from "@/shared/ui/Tabs/Tabs";
@@ -20,18 +24,41 @@ const TAB_PERSONAL_DATA = "personal";
 
 export default function StudentStatsPage() {
     const user = useUser();
+    const [searchParams] = useSearchParams();
     const [activeTab, setActiveTab] = useState(TAB_STATISTICS);
 
     useEffect(() => {
-        document.title = "Мой профиль";
+        document.title = "Статистика";
     }, []);
 
     if (!user) {
         return null;
     }
 
+    const studentId = searchParams.get("studentId") || user.profileId;
+
+    // Check permissions
+    if (studentId !== user.profileId) {
+        if (user.role === "Родитель") {
+            const childrenIds = getParentChildrenIdsByParentId(user.profileId);
+            if (!childrenIds.includes(studentId)) {
+                return <div>Доступ запрещен</div>;
+            }
+        } else {
+            return <div>Доступ запрещен</div>;
+        }
+    }
+
+    const studentUser = users.find(
+        (u) => u.profileId === studentId && u.role === "Ученик",
+    );
+
+    if (!studentUser) {
+        return <div>Студент не найден</div>;
+    }
+
     const studentEnrollments = enrollments.filter(
-        (e) => e.studentId === user.profileId,
+        (e) => e.studentId === studentId,
     );
 
     const activeEnrollments = studentEnrollments.filter(
@@ -58,8 +85,8 @@ export default function StudentStatsPage() {
         <AppLayout>
             <div className="stats-page">
                 <ProfileCard
-                    name={user.firstName}
-                    role={user.role}
+                    name={studentUser.firstName}
+                    role={studentUser.role}
                     certificates={1}
                     tasks={53}
                 />
