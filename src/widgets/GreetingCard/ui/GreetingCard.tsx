@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import { users } from "@/entities/user/model/users";
 import "./GreetingCard.css";
 
 interface Props {
@@ -18,6 +20,16 @@ export default function GreetingCard({
     nextLesson,
     childrenIds,
 }: Props) {
+    const childrenNames = useMemo(() => {
+        if (!childrenIds) return [];
+        return childrenIds.map((childId) => {
+            const user = users.find(
+                (u) => u.profileId === childId && u.role === "Ученик",
+            );
+            return user ? `${user.firstName} ${user.lastName}` : childId;
+        });
+    }, [childrenIds]);
+
     return (
         <div className="greeting-card">
             <div className="greeting-info">
@@ -27,7 +39,9 @@ export default function GreetingCard({
                     <>
                         <p>
                             Дети:{" "}
-                            {childrenIds?.length ? childrenIds.join(", ") : "—"}
+                            {childrenNames.length
+                                ? childrenNames.join(", ")
+                                : "—"}
                         </p>
                     </>
                 ) : (

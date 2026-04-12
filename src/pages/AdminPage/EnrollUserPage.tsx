@@ -6,7 +6,6 @@ import { setPageTitle, useUser } from "@/app/store/store";
 import { users } from "@/entities/user/model/users";
 import { courses } from "@/entities/course/model/courses";
 import { addEnrollment } from "@/entities/enrollment/model/enrollments";
-import { students } from "@/entities/student/model/students";
 import type { Enrollment } from "@/shared/types/enrollment";
 
 import "./AdminPage.css";
@@ -37,15 +36,6 @@ export default function EnrollUserPage() {
 
     const studentUsers = users.filter((item) => item.role === "Ученик");
     const availableCourses = courses;
-
-    function getStudentLabel(studentIdValue: string) {
-        const userInfo = studentUsers.find(
-            (item) => item.profileId === studentIdValue,
-        );
-        return userInfo
-            ? `${userInfo.lastName} ${userInfo.firstName}`
-            : "Выберите ученика";
-    }
 
     function handleSubmit(event: React.FormEvent) {
         event.preventDefault();

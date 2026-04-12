@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useUser } from "@/app/store/store";
-import { students } from "@/entities/student/model/students";
 import { courses } from "@/entities/course/model/courses";
 import { enrollments } from "@/entities/enrollment/model/enrollments";
 import { users } from "@/entities/user/model/users";

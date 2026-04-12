@@ -7,7 +7,6 @@ import {
     addUser,
     generateProfileId,
     generateUserId,
-    users,
 } from "@/entities/user/model/users";
 import { addParent } from "@/entities/parent/model/parents";
 import { addStudent } from "@/entities/student/model/students";

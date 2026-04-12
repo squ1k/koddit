@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { students } from "@/entities/student/model/students";
 import { users } from "@/entities/user/model/users";
 import Button from "@/shared/ui/Button/Button";
-import Card from "@/shared/ui/Card/Card";
 import "./ChildrenList.css";
 
 interface Child {
@@ -50,7 +49,7 @@ export default function ChildrenList({ childrenIds }: ChildrenListProps) {
     };
 
     return (
-        <Card className="children-list">
+        <div className="children-list">
             <h3>Мои дети</h3>
             {children.length === 0 ? (
                 <p>Нет зарегистрированных детей</p>
@@ -62,19 +61,16 @@ export default function ChildrenList({ childrenIds }: ChildrenListProps) {
                             <div className="child-actions">
                                 <Button
                                     onClick={() => handleViewStats(child.id)}
-                                    variant="secondary"
                                 >
                                     Статистика
                                 </Button>
                                 <Button
                                     onClick={() => handleViewSchedule(child.id)}
-                                    variant="secondary"
                                 >
                                     Расписание
                                 </Button>
                                 <Button
                                     onClick={() => handleViewPayments(child.id)}
-                                    variant="secondary"
                                 >
                                     Платежи
                                 </Button>
@@ -83,6 +79,6 @@ export default function ChildrenList({ childrenIds }: ChildrenListProps) {
                     ))}
                 </div>
             )}
-        </Card>
+        </div>
     );
 }
