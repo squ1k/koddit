@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import { useUser } from "@/app/store/store";
 import { enrollments } from "@/entities/enrollment/model/enrollments";
 import { courses } from "@/entities/course/model/courses";
-import { students } from "@/entities/student/model/students";
 import { users } from "@/entities/user/model/users";
 import { getParentChildrenIdsByParentId } from "@/entities/parent/model/selectors";
 import AppLayout from "@/app/layout/AppLayout";

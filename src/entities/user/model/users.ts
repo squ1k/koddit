@@ -34,6 +34,36 @@ export const users: User[] = [
 
   {
     id: "u3",
+    role: "Ученик",
+    profileId: "s3",
+
+    firstName: "Анна",
+    lastName: "Иванова",
+
+    phone: "+7 913 444-55-66",
+    email: "anna.i@mail.ru",
+    telegram: "@anna_i",
+
+    password: "pass123"
+  },
+
+  {
+    id: "u4",
+    role: "Ученик",
+    profileId: "s4",
+
+    firstName: "Денис",
+    lastName: "Петров",
+
+    phone: "+7 914 777-88-99",
+    email: "denis@mail.ru",
+    telegram: "@denis",
+
+    password: "pass123"
+  },
+
+  {
+    id: "u5",
     role: "Родитель",
     profileId: "p1",
 
@@ -48,7 +78,7 @@ export const users: User[] = [
   },
 
   {
-    id: "u4",
+    id: "u6",
     role: "Родитель",
     profileId: "p2",
 
@@ -63,7 +93,22 @@ export const users: User[] = [
   },
 
   {
-    id: "u5",
+    id: "u7",
+    role: "Родитель",
+    profileId: "p3",
+
+    firstName: "Светлана",
+    lastName: "Петрова",
+
+    phone: "+7 999 333-22-11",
+    email: "svetlana@mail.ru",
+    telegram: "@svetlana",
+
+    password: "parent123"
+  },
+
+  {
+    id: "u8",
     role: "Учитель",
     profileId: "t1",
 
@@ -78,7 +123,7 @@ export const users: User[] = [
   },
 
   {
-    id: "u6",
+    id: "u9",
     role: "Учитель",
     profileId: "t2",
 
@@ -93,7 +138,7 @@ export const users: User[] = [
   },
 
   {
-    id: "u7",
+    id: "u10",
     role: "Администратор",
     profileId: "a1",
 

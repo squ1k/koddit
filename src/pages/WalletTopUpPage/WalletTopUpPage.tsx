@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { setPageTitle, useUser } from "@/app/store/store";
-import { students } from "@/entities/student/model/students";
 import { users } from "@/entities/user/model/users";
 import { getParentChildrenIdsByParentId } from "@/entities/parent/model/selectors";
 import AppLayout from "@/app/layout/AppLayout";
