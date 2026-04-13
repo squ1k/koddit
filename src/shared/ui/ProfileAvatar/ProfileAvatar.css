@@ -1,4 +1,4 @@
-a.profile-avatar {
+.shared-profile-avatar {
 
   width: 39px;
   height: 39px;
@@ -28,10 +28,24 @@ a.profile-avatar {
 
 }
 
-a.profile-avatar:hover {
+.shared-profile-avatar:hover {
 
   transform: translateY(-1px);
 
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+
+}
+
+.shared-profile-avatar--disabled {
+
+  cursor: default;
+  filter: saturate(0.95);
+
+}
+
+.shared-profile-avatar--disabled:hover {
+
+  transform: none;
+  box-shadow: none;
 
 }

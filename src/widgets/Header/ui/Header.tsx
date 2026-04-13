@@ -26,7 +26,15 @@ export default function Header() {
             {user && title && (
                 <div className="header-user mt-4">
                     <div className="d-flex">
-                        <ProfileAvatar name={user.firstName} />
+                        <ProfileAvatar
+                            name={user.firstName}
+                            to={
+                                user.role !== "Администратор"
+                                    ? "/profile/personal"
+                                    : undefined
+                            }
+                            disabled={user.role === "Администратор"}
+                        />
 
                         <span className="user-role">{user.role}</span>
                     </div>

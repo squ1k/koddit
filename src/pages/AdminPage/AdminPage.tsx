@@ -23,7 +23,7 @@ const columns: Array<{
 
 export default function AdminPage() {
     useEffect(() => {
-        setPageTitle("Панель администратора");
+        setPageTitle("Панель управления");
     }, []);
 
     const user = useUser();
@@ -92,7 +92,7 @@ export default function AdminPage() {
                     <table className="admin-table">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>ID</th>
                                 {columns.map((column) => (
                                     <th
                                         key={column.key}
@@ -103,8 +103,8 @@ export default function AdminPage() {
                                         {sortBy === column.key && (
                                             <span>
                                                 {sortOrder === "asc"
-                                                    ? " ▲"
-                                                    : " ▼"}
+                                                    ? " ▼"
+                                                    : " ▲"}
                                             </span>
                                         )}
                                     </th>

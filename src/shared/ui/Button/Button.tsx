@@ -9,14 +9,15 @@ export default function Button({
     children,
     isLoading,
     disabled,
+    className,
     ...rest
 }: Props) {
+    const classes = ["btn btn-primary text-center", className]
+        .filter(Boolean)
+        .join(" ");
+
     return (
-        <button
-            className="btn btn-primary text-center"
-            disabled={disabled || isLoading}
-            {...rest}
-        >
+        <button className={classes} disabled={disabled || isLoading} {...rest}>
             {isLoading ? (
                 <span className="button-content">
                     <span className="spinner" aria-hidden="true" />

@@ -27,6 +27,14 @@
     box-shadow: 0 8px 12px rgba(119, 55, 246, 0.3);
 }
 
+.btn-logout {
+    background: linear-gradient(45deg, #ff5f68, #d82855);
+}
+
+.btn-logout:hover {
+    box-shadow: 0 8px 12px rgba(255, 95, 104, 0.3);
+}
+
 .btn:active {
     transform: translateY(0);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

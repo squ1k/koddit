@@ -32,6 +32,7 @@ export function PersonalDataForm() {
     });
 
     const [saved, setSaved] = useState(false);
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     if (!user) {
         return <p>Пользователь не найден</p>;
@@ -115,8 +116,9 @@ export function PersonalDataForm() {
                 <Button
                     type="button"
                     onClick={() => {
-                        logout();
+                        setShowLogoutConfirm(true);
                     }}
+                    className="btn-logout"
                 >
                     Выйти
                 </Button>
@@ -124,37 +126,72 @@ export function PersonalDataForm() {
 
             {saved && <p className="save-feedback">Сохранено</p>}
 
-            <h2>Информация о родителе</h2>
+            {showLogoutConfirm && (
+                <div
+                    className="logout-confirmation-overlay"
+                    role="dialog"
+                    aria-modal="true"
+                >
+                    <div className="logout-confirmation-dialog">
+                        <h3>Подтвердите выход</h3>
+                        <p>Вы действительно хотите выйти из аккаунта?</p>
+                        <div className="logout-confirmation-actions">
+                            <Button
+                                type="button"
+                                onClick={() => {
+                                    logout();
+                                }}
+                                className="btn-logout"
+                            >
+                                Да, выйти
+                            </Button>
+                            <button
+                                type="button"
+                                className="logout-cancel-button"
+                                onClick={() => setShowLogoutConfirm(false)}
+                            >
+                                Отмена
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
-            <div className="form-row">
-                <label>
-                    Телефон
-                    <Input
-                        value={values.parentPhone}
-                        onChange={onChange("parentPhone")}
-                    />
-                </label>
-            </div>
+            {user.role === "Ученик" && (
+                <>
+                    <h2>Информация о родителе</h2>
 
-            <div className="form-row">
-                <label>
-                    E-mail
-                    <Input
-                        value={values.parentEmail}
-                        onChange={onChange("parentEmail")}
-                    />
-                </label>
-            </div>
+                    <div className="form-row">
+                        <label>
+                            Телефон
+                            <Input
+                                value={values.parentPhone}
+                                onChange={onChange("parentPhone")}
+                            />
+                        </label>
+                    </div>
 
-            <div className="form-row">
-                <label>
-                    Telegram
-                    <Input
-                        value={values.parentTelegram}
-                        onChange={onChange("parentTelegram")}
-                    />
-                </label>
-            </div>
+                    <div className="form-row">
+                        <label>
+                            E-mail
+                            <Input
+                                value={values.parentEmail}
+                                onChange={onChange("parentEmail")}
+                            />
+                        </label>
+                    </div>
+
+                    <div className="form-row">
+                        <label>
+                            Telegram
+                            <Input
+                                value={values.parentTelegram}
+                                onChange={onChange("parentTelegram")}
+                            />
+                        </label>
+                    </div>
+                </>
+            )}
         </div>
     );
 }
