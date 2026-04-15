@@ -92,7 +92,7 @@ export default function AdminPage() {
                     <table className="admin-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>№</th>
                                 {columns.map((column) => (
                                     <th
                                         key={column.key}
