@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import AppLayout from "@/app/layout/AppLayout";
 import { useUser } from "@/app/store/store";
 import { courses } from "@/entities/course/model/courses";
-import { modules } from "@/entities/courseModule/model/courseModules";
+import { modules as allModules } from "@/entities/courseModule/model/courseModules";
+import { lessons, tasks, quizzes } from "@/entities/lesson/model/lessons";
 import { enrollments } from "@/entities/enrollment/model/enrollments";
 import { courseProgress } from "@/entities/progress/model/courseProgress";
 import { users } from "@/entities/user/model/users";
@@ -22,18 +23,38 @@ export default function CoursePage() {
     const navigate = useNavigate();
 
     const [activeTab, setActiveTab] = useState(TAB_CONTENT);
+    const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
 
     const course = courses.find((c) => c.id === courseId);
 
     const courseModules = useMemo(
         () =>
             courseId && course
-                ? modules
+                ? allModules
                       .filter((m) => m.courseId === courseId)
                       .sort((a, b) => a.order - b.order)
                 : [],
         [courseId, course],
     );
+
+    const moduleLessons = useMemo(() => {
+        if (!selectedModuleId) return [];
+        return lessons
+            .filter((l) => l.moduleId === selectedModuleId)
+            .sort((a, b) => a.order - b.order);
+    }, [selectedModuleId]);
+
+    const moduleTasks = useMemo(() => {
+        if (!selectedModuleId) return [];
+        const lessonIds = moduleLessons.map((l) => l.id);
+        return tasks.filter((t) => lessonIds.includes(t.lessonId));
+    }, [selectedModuleId, moduleLessons]);
+
+    const moduleQuizzes = useMemo(() => {
+        if (!selectedModuleId) return [];
+        const lessonIds = moduleLessons.map((l) => l.id);
+        return quizzes.filter((q) => lessonIds.includes(q.lessonId));
+    }, [selectedModuleId, moduleLessons]);
 
     useEffect(() => {
         if (courseId) {
@@ -81,61 +102,66 @@ export default function CoursePage() {
         }
     };
 
+    const handleModuleClick = (moduleId: string) => {
+        setSelectedModuleId(selectedModuleId === moduleId ? null : moduleId);
+    };
+
+    const handleLessonClick = (lessonId: string) => {
+        navigate(`/course/${courseId}/lesson/${lessonId}`);
+    };
+
+    const handleTaskClick = (taskId: string) => {
+        navigate(`/course/${courseId}/task/${taskId}`);
+    };
+
+    const handleQuizClick = (quizId: string) => {
+        navigate(`/course/${courseId}/quiz/${quizId}`);
+    };
+
     return (
         <AppLayout>
             <div className="course-page">
                 <div className="course-page__header">
-                    <Link to="/profile" className="course-page__back">
-                        ← Назад
-                    </Link>
-
                     <div className="course-page__title-block">
                         <div className="course-page__title-row">
                             <h1 className="course-page__title">
                                 {course.title}
                             </h1>
 
-                            <div className="course-page__actions">
-                                <button
-                                    type="button"
-                                    onClick={handleOpenChat}
-                                    className="course-page__icon-btn"
-                                    aria-label="Уведомления"
-                                >
-                                    🔔
-                                </button>
-                                <button
-                                    type="button"
-                                    className="course-page__icon-btn"
-                                    aria-label="Чат"
-                                >
-                                    💬
-                                </button>
-                                <span
-                                    className={`course-page__course-status ${
-                                        courseEnrollment?.status === "active"
-                                            ? "course-page__course-status--active"
-                                            : "course-page__course-status--inactive"
-                                    }`}
-                                >
-                                    {courseEnrollment
-                                        ? courseEnrollment.status === "active"
-                                            ? "Активный"
-                                            : courseEnrollment.status
-                                        : "Не записан"}
-                                </span>
-                            </div>
+                            <span
+                                className={`course-page__course-status ${
+                                    courseEnrollment?.status === "active"
+                                        ? "course-page__course-status--active"
+                                        : "course-page__course-status--inactive"
+                                }`}
+                            >
+                                {courseEnrollment
+                                    ? courseEnrollment.status === "active"
+                                        ? "Активный"
+                                        : courseEnrollment.status
+                                    : "Не записан"}
+                            </span>
                         </div>
 
                         <div className="course-page__meta">
                             <span>{course.lessonsCount} занятий</span>
                             <span>{courseModules.length} модулей</span>
                         </div>
-                        <div className="course-page__teacher">
-                            Преподаватель:{" "}
-                            {teacher
-                                ? `${teacher.firstName} ${teacher.lastName}`
-                                : "невідомо"}
+                        <div className="course-page__teacher-row">
+                            <span className="course-page__teacher">
+                                Преподаватель:{" "}
+                                {teacher
+                                    ? `${teacher.firstName} ${teacher.lastName}`
+                                    : "неизвестно"}
+                            </span>
+                            <button
+                                type="button"
+                                onClick={handleOpenChat}
+                                className="course-page__chat-btn"
+                                aria-label="Чат"
+                            >
+                                💬 Написать
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -158,23 +184,167 @@ export default function CoursePage() {
                             ) : (
                                 <ul className="course-modules">
                                     {courseModules.map((module) => (
-                                        <li
-                                            key={module.id}
-                                            className="course-modules__item"
-                                        >
-                                            <div className="course-modules__order">
-                                                {module.order}
-                                            </div>
-                                            <div className="course-modules__title">
-                                                {module.title}
-                                            </div>
-                                            <div className="course-modules__status">
-                                                {module.order <=
-                                                (progressPercent / 100) *
-                                                    courseModules.length
-                                                    ? "Пройден"
-                                                    : "В работе"}
-                                            </div>
+                                        <li key={module.id}>
+                                            <button
+                                                type="button"
+                                                className={`course-modules__item ${
+                                                    selectedModuleId === module.id
+                                                        ? "expanded"
+                                                        : ""
+                                                }`}
+                                                onClick={() =>
+                                                    handleModuleClick(module.id)
+                                                }
+                                            >
+                                                <div className="course-modules__order">
+                                                    {module.order}
+                                                </div>
+                                                <div className="course-modules__content">
+                                                    <div className="course-modules__title">
+                                                        {module.title}
+                                                    </div>
+                                                    {module.annotation && (
+                                                        <div className="course-modules__annotation">
+                                                            {module.annotation}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="course-modules__status">
+                                                    {module.order <=
+                                                    (progressPercent / 100) *
+                                                        courseModules.length
+                                                        ? "✓"
+                                                        : ""}
+                                                </div>
+                                            </button>
+
+                                            {selectedModuleId === module.id && (
+                                                <div className="module-expand">
+                                                    {moduleLessons.length > 0 && (
+                                                        <div className="module-section">
+                                                            <h4 className="module-section__title">
+                                                                Уроки
+                                                            </h4>
+                                                            <ul className="module-lessons">
+                                                                {moduleLessons.map(
+                                                                    (
+                                                                        lesson,
+                                                                    ) => (
+                                                                        <button
+                                                                            type="button"
+                                                                            key={
+                                                                                lesson.id
+                                                                            }
+className={`module-lesson ${
+                                                                                lesson.isCompleted
+                                                                                    ? "completed"
+                                                                                    : ""
+                                                                            }`}
+                                                                        onClick={() => handleLessonClick(lesson.id)}
+                                                                    >
+                                                                        <div className="module-lesson__header">
+                                                                                <span className="module-lesson__title">
+                                                                                    {
+                                                                                        lesson.title
+                                                                                    }
+                                                                                </span>
+                                                                                <span
+                                                                                    className={`module-lesson__attendance ${
+                                                                                        lesson.isCompleted
+                                                                                            ? "attended"
+                                                                                            : ""
+                                                                                    }`}
+                                                                                >
+                                                                                    {lesson.isCompleted
+                                                                                        ? "✓"
+                                                                                        : "○"}
+                                                                                </span>
+                                                                            </div>
+<p className="module-lesson__summary">
+                                                                                 {
+                                                                                     lesson.summary
+                                                                                 }
+                                                                             </p>
+                                                                         </button>
+                                                                    ),
+                                                                )}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+
+                                                    {moduleTasks.length > 0 && (
+                                                        <div className="module-section">
+                                                            <h4 className="module-section__title">
+                                                                Задания
+                                                            </h4>
+                                                            <ul className="module-tasks">
+                                                                {moduleTasks.map(
+                                                                    (task) => (
+                                                                        <button
+                                                                            type="button"
+                                                                            key={
+                                                                                task.id
+                                                                            }
+className={`module-task ${
+                                                                                task.isCompleted
+                                                                                    ? "completed"
+                                                                                    : ""
+                                                                            }`}
+                                                                        onClick={() => handleTaskClick(task.id)}
+                                                                        >
+                                                                            <span className="module-task__checkbox">
+                                                                                {task.isCompleted
+                                                                                    ? "✓"
+                                                                                    : "○"}
+                                                                            </span>
+                                                                            <span className="module-task__title">
+                                                                                {
+                                                                                    task.title
+                                                                                }
+                                                                            </span>
+                                                                        </button>
+                                                                    ),
+                                                                )}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+
+                                                    {moduleQuizzes.length > 0 && (
+                                                        <div className="module-section">
+                                                            <h4 className="module-section__title">
+                                                                Тесты
+                                                            </h4>
+                                                            <ul className="module-quizzes">
+                                                                {moduleQuizzes.map(
+                                                                    (quiz) => (
+                                                                        <button
+                                                                            type="button"
+                                                                            key={
+                                                                                quiz.id
+                                                                            }
+className={`module-quiz ${
+                                                                                quiz.isCompleted
+                                                                                    ? "completed"
+                                                                                    : ""
+                                                                            }`}
+                                                                        onClick={() => handleQuizClick(quiz.id)}
+                                                                        >
+                                                                            <span className="module-quiz__title">
+                                                                                {
+                                                                                    quiz.title
+                                                                                }
+                                                                            </span>
+<span className="module-quiz__info">
+                                                                                 {quiz.questions.length} вопросов
+                                                                             </span>
+                                                                        </button>
+                                                                    ),
+                                                                )}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
                                         </li>
                                     ))}
                                 </ul>

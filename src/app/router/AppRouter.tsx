@@ -6,6 +6,7 @@ import StudentStatsPage from "@/pages/StudentStatsPage";
 import PersonalDataPage from "@/pages/PersonalDataPage";
 import WalletTopUpPage from "@/pages/WalletTopUpPage";
 import CoursePage from "@/pages/CoursePage";
+import LessonPage from "@/pages/LessonPage";
 import ChatPage from "@/pages/ChatPage";
 import AdminPage from "@/pages/AdminPage";
 import AdminCreateUserPage from "@/pages/AdminPage/CreateUserPage";
@@ -78,6 +79,15 @@ export default function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <CoursePage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/course/:courseId/:contentType/:contentId"
+                    element={
+                        <ProtectedRoute>
+                            <LessonPage />
                         </ProtectedRoute>
                     }
                 />

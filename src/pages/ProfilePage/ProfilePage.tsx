@@ -53,45 +53,28 @@ function StudentProfilePage() {
         [studentEnrollments],
     );
 
-    const paidCoursesCount = useMemo(
-        () =>
-            studentEnrollments.filter((enrollment) => enrollment.paid !== false)
-                .length,
-        [studentEnrollments],
-    );
-
-    const unpaidCoursesCount = useMemo(
-        () =>
-            studentEnrollments.filter((enrollment) => enrollment.paid === false)
-                .length,
-        [studentEnrollments],
-    );
-
     const scheduleLessons = useMemo(() => {
-        const dayIndexMap: Record<string, number> = {
-            Понедельник: 1,
-            Вторник: 2,
-            Среда: 3,
-            Четверг: 4,
-            Пятница: 5,
-            Суббота: 6,
-            Воскресенье: 0,
+        const WEEKDAY_MAP: Record<string, number> = {
+            "Понедельник": 0,
+            "Вторник": 1,
+            "Среда": 2,
+            "Четверг": 3,
+            "Пятница": 4,
+            "Суббота": 5,
+            "Воскресенье": 6,
         };
+
+        function getMondayOfWeek(reference: Date, weeksOffset: number): Date {
+            const date = new Date(reference);
+            const dayOfWeek = date.getDay();
+            const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            date.setDate(date.getDate() + diff + weeksOffset * 7);
+            date.setHours(0, 0, 0, 0);
+            return date;
+        }
 
         const today = new Date();
-        const currentDay = today.getDay();
-
-        const getNextDateForWeekday = (weekday: string) => {
-            const targetDay = dayIndexMap[weekday];
-            if (targetDay === undefined) {
-                return new Date(today);
-            }
-
-            const delta = (targetDay - currentDay + 7) % 7;
-            const result = new Date(today);
-            result.setDate(today.getDate() + (delta === 0 ? 0 : delta));
-            return result;
-        };
+        const currentWeekMonday = getMondayOfWeek(today, 0);
 
         return activeEnrollments
             .flatMap((enrollment) => {
@@ -100,12 +83,35 @@ function StudentProfilePage() {
                 );
                 if (!course) return [];
 
-                return course.schedule.map((scheduleItem, index) => ({
-                    id: `${enrollment.id}-${index}`,
-                    courseTitle: course.title,
-                    lessonTitle: `${scheduleItem.day}, ${scheduleItem.time}`,
-                    date: getNextDateForWeekday(scheduleItem.day),
-                }));
+                const allLessons: {
+                    id: string;
+                    courseTitle: string;
+                    lessonTitle: string;
+                    date: Date;
+                }[] = [];
+
+                for (let weekOffset = -8; weekOffset <= 4; weekOffset++) {
+                    const monday = new Date(currentWeekMonday);
+                    monday.setDate(currentWeekMonday.getDate() + weekOffset * 7);
+
+                    course.schedule.forEach((scheduleItem, scheduleIndex) => {
+                        const dayOffset = WEEKDAY_MAP[scheduleItem.day] ?? 0;
+                        const lessonDate = new Date(monday);
+                        lessonDate.setDate(monday.getDate() + dayOffset);
+
+                        const [hours, minutes] = scheduleItem.time.split(":").map(Number);
+                        lessonDate.setHours(hours, minutes, 0, 0);
+
+                        allLessons.push({
+                            id: `${enrollment.id}-${scheduleIndex}-w${weekOffset + 8}`,
+                            courseTitle: course.title,
+                            lessonTitle: `${scheduleItem.day}, ${scheduleItem.time}`,
+                            date: lessonDate,
+                        });
+                    });
+                }
+
+                return allLessons;
             })
             .sort((a, b) => a.date.getTime() - b.date.getTime());
     }, [activeEnrollments]);
@@ -150,23 +156,22 @@ function StudentProfilePage() {
                         </>
                     )}
 
+                    {user.role === "Ученик" && (
+                        <>
+                            <Calendar lessons={scheduleLessons} />
+                            <PaymentCard
+                                balance={balance}
+                                enrollments={studentEnrollments}
+                            />
+                        </>
+                    )}
+
                     {user.role === "Родитель" && (
                         <ChildrenList
                             childrenIds={welcomeData.childrenIds || []}
                         />
                     )}
                 </div>
-
-                {user.role === "Ученик" && (
-                    <div className="profile-sidebar">
-                        <Calendar lessons={scheduleLessons} />
-                        <PaymentCard
-                            balance={balance}
-                            paidCoursesCount={paidCoursesCount}
-                            unpaidCoursesCount={unpaidCoursesCount}
-                        />
-                    </div>
-                )}
             </div>
         </AppLayout>
     );

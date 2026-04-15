@@ -17,6 +17,7 @@ const WEEKDAYS = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"];
 export default function Calendar({ lessons = [] }: Props) {
     const [weekOffset, setWeekOffset] = useState(0);
     const [isExpanded, setIsExpanded] = useState(true);
+    const [selectedDayIndex, setSelectedDayIndex] = useState<number | null>(null);
     const currentDate = new Date();
 
     const getWeekDays = (date: Date) => {
@@ -38,8 +39,8 @@ export default function Calendar({ lessons = [] }: Props) {
 
     const monthName = weekDays[0].toLocaleString(
         "ru-RU",
-        { month: "long", year: "numeric" },
-    );
+        { month: "long" },
+    ) + " " + weekDays[0].getFullYear();
 
     const isToday = (date: Date) => {
         return (
@@ -102,67 +103,103 @@ export default function Calendar({ lessons = [] }: Props) {
 
                 <div className="calendar-week-view mb-4">
                     {weekDays.map((date, i) => {
-                        const lessonCount = lessons.filter(
+                        const dayLessons = lessons.filter(
                             (lesson) =>
                                 lesson.date.getDate() === date.getDate() &&
                                 lesson.date.getMonth() === date.getMonth() &&
                                 lesson.date.getFullYear() === date.getFullYear(),
-                        ).length;
+                        );
+
+                        const handleClick = () => {
+                            setSelectedDayIndex(selectedDayIndex === i ? null : i);
+                        };
 
                         return (
                             <div
                                 key={i}
                                 className={`calendar-week-day ${
                                     isToday(date) ? "is-today" : ""
-                                } ${isPast(date) ? "is-past" : ""}`}
+                                } ${isPast(date) ? "is-past" : ""} ${
+                                    selectedDayIndex === i ? "selected" : ""
+                                }`}
                             >
-                                <div className="week-day-name">
-                                    {WEEKDAYS[i]}
-                                </div>
-                                <div className="week-day-date">
-                                    {date.getDate()}
-                                </div>
-                                <div className={`week-day-line ${
-                                    lessonCount > 0 ? "has-lesson" : ""
-                                } ${isToday(date) ? "is-today" : ""}`} />
-                                <div className="week-day-dots">
-                                    {Array.from({ length: lessonCount }).map((_, j) => (
-                                        <span
-                                            key={j}
-                                            className={`lesson-dot ${isPast(date) ? "is-past" : ""}`}
-                                        />
-                                    ))}
-                                </div>
+                                <button
+                                    type="button"
+                                    className="calendar-day-button"
+                                    onClick={handleClick}
+                                >
+                                    <div className="week-day-name">
+                                        {WEEKDAYS[i]}
+                                    </div>
+                                    <div className="week-day-date">
+                                        {date.getDate()}
+                                    </div>
+                                    <div className={`week-day-line ${
+                                        isToday(date) ? "is-today" : ""
+                                    }`} />
+                                    <div className="week-day-dots">
+                                        {Array.from({ length: dayLessons.length }).map((_, j) => (
+                                            <span
+                                                key={j}
+                                                className={`lesson-dot ${isPast(date) ? "is-past" : ""}`}
+                                            />
+                                        ))}
+                                    </div>
+                                </button>
+                                {selectedDayIndex === i && (
+                                    <div className="day-lessons accordion-content">
+                                        {dayLessons.length > 0 ? (
+                                            <ul className="list-unstyled m-0">
+                                                {dayLessons.map((lesson) => (
+                                                    <li key={lesson.id} className="day-lesson-item">
+                                                        <span className="day-lesson-time">
+                                                            {lesson.lessonTitle.split(", ")[1]}
+                                                        </span>
+                                                        <span className="day-lesson-title">
+                                                            {lesson.courseTitle}
+                                                        </span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <p className="no-lessons-text">
+                                                В этот день занятий не запланировано
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         );
                     })}
                 </div>
 
-                {lessons.length > 0 && (
-                    <div className="lessons-list border-top pt-3">
-                        <h4 className="mb-3">Уроки:</h4>
-                        <ul className="list-unstyled m-0">
-                            {lessons.slice(0, 6).map((lesson) => {
-                                const today = new Date();
-                                today.setHours(0, 0, 0, 0);
-                                const lessonDay = new Date(lesson.date);
-                                lessonDay.setHours(0, 0, 0, 0);
-                                const isPastLesson = lessonDay < today;
+                {(() => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const futureLessons = lessons.filter((lesson) => {
+                        const lessonDay = new Date(lesson.date);
+                        lessonDay.setHours(0, 0, 0, 0);
+                        return lessonDay >= today;
+                    }).slice(0, 3);
 
-                                return (
-                                    <li key={lesson.id} className={`d-flex gap-2 mb-2 ${isPastLesson ? "lesson-past" : ""}`}>
-                                        <span className={`lesson-date fw-semibold ${isPastLesson ? "text-muted" : ""}`}>
+                    return futureLessons.length > 0 && (
+                        <div className="nearest-lessons border-top pt-3">
+                            <h4 className="mb-3">Ближайшие занятия:</h4>
+                            <ul className="list-unstyled m-0">
+                                {futureLessons.map((lesson) => (
+                                    <li key={lesson.id} className="d-flex gap-2 mb-2">
+                                        <span className="lesson-date fw-semibold">
                                             {lesson.date.toLocaleDateString("ru-RU")}
                                         </span>
-                                        <span className={`lesson-info ${isPastLesson ? "text-muted" : ""}`}>
+                                        <span className="lesson-info">
                                             {lesson.courseTitle} - {lesson.lessonTitle}
                                         </span>
                                     </li>
-                                );
-                            })}
-                        </ul>
-                    </div>
-                )}
+                                ))}
+                            </ul>
+                        </div>
+                    );
+                })()}
             </div>
         </div>
     );

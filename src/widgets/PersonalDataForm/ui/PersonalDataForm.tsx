@@ -1,5 +1,7 @@
-import { useState, type ChangeEvent } from "react";
+import { useState, useMemo, type ChangeEvent } from "react";
 import { useUser, logout } from "@/app/store/store";
+import { students } from "@/entities/student/model/students";
+import { parents } from "@/entities/parent/model/parents";
 import Input from "@/shared/ui/Input/Input";
 import Button from "@/shared/ui/Button/Button";
 import "./PersonalDataForm.css";
@@ -11,6 +13,7 @@ type PersonalDataFormValues = {
     phone: string;
     email: string;
     telegram: string;
+    parentName: string;
     parentPhone: string;
     parentEmail: string;
     parentTelegram: string;
@@ -19,6 +22,16 @@ type PersonalDataFormValues = {
 export function PersonalDataForm() {
     const user = useUser();
 
+    const parentInfo = useMemo(() => {
+        if (!user || user.role !== "Ученик") return null;
+
+        const student = students.find((s) => s.id === user.profileId);
+        if (!student) return null;
+
+        const parent = parents.find((p) => p.id === student.parentId);
+        return parent ?? null;
+    }, [user]);
+
     const [values, setValues] = useState<PersonalDataFormValues>({
         firstName: user?.firstName ?? "",
         lastName: user?.lastName ?? "",
@@ -26,9 +39,10 @@ export function PersonalDataForm() {
         phone: user?.phone ?? "",
         email: user?.email ?? "",
         telegram: user?.telegram ?? "",
-        parentPhone: "",
-        parentEmail: "",
-        parentTelegram: "",
+        parentName: parentInfo?.parentName ?? "",
+        parentPhone: parentInfo?.phone ?? "",
+        parentEmail: parentInfo?.email ?? "",
+        parentTelegram: parentInfo?.telegram ?? "",
     });
 
     const [saved, setSaved] = useState(false);
@@ -160,6 +174,16 @@ export function PersonalDataForm() {
             {user.role === "Ученик" && (
                 <>
                     <h2>Информация о родителе</h2>
+
+                    <div className="form-row">
+                        <label>
+                            Имя
+                            <Input
+                                value={values.parentName}
+                                onChange={onChange("parentName")}
+                            />
+                        </label>
+                    </div>
 
                     <div className="form-row">
                         <label>

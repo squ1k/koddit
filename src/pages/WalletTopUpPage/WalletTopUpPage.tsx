@@ -84,14 +84,6 @@ export default function WalletTopUpPage() {
         <AppLayout>
             <div className="wallet-topup-page">
                 <div className="topup-container">
-                    <button
-                        className="back-button"
-                        onClick={() => navigate("/profile")}
-                        title="Вернуться назад"
-                    >
-                        ← На главную
-                    </button>
-
                     <div className="topup-card">
                         <h1 className="topup-title">
                             Пополнение счёта {studentUser.firstName}{" "}
