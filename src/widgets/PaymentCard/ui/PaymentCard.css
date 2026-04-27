@@ -53,9 +53,7 @@
 }
 
 .payment-toggle-row {
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .payment-toggle-switch {
@@ -63,11 +61,13 @@
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
+    padding: 12px 16px;
+    border-radius: 12px;
 }
 
 .payment-toggle__label {
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 600;
     color: #333;
 }
 
@@ -77,32 +77,33 @@
 
 .payment-toggle__switch {
     position: relative;
-    width: 44px;
-    height: 24px;
+    width: 52px;
+    height: 28px;
     background: #e0e0e0;
-    border-radius: 12px;
-    transition: background 0.2s ease;
+    border-radius: 14px;
+    transition: background 0.3s ease;
+    flex-shrink: 0;
 }
 
 .payment-toggle__switch::after {
     content: "";
     position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 20px;
-    height: 20px;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
     background: white;
     border-radius: 50%;
-    transition: transform 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .payment-toggle__checkbox:checked + .payment-toggle__switch {
-    background: #7737F6;
+    background: linear-gradient(135deg, #7737F6, #A956E5);
 }
 
 .payment-toggle__checkbox:checked + .payment-toggle__switch::after {
-    transform: translateX(20px);
+    transform: translateX(24px);
 }
 
 .balance-topup-row {
@@ -195,4 +196,67 @@
 
 .course-status.unpaid {
     color: #b01c1c;
+}
+
+.payment-message {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.payment-message.success {
+    background: rgba(76, 175, 80, 0.1);
+    color: #2e7d32;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.payment-message.error {
+    background: rgba(244, 67, 54, 0.1);
+    color: #c62828;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.course-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.course-price {
+    font-size: 12px;
+    color: #666;
+}
+
+.course-actions {
+    display: flex;
+    align-items: center;
+}
+
+.course-paid-until {
+    font-size: 12px;
+    color: #4caf50;
+    font-weight: 500;
+}
+
+.pay-button {
+    padding: 8px 16px;
+    background: #7737F6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pay-button:hover:not(:disabled) {
+    background: #6a2fd6;
+}
+
+.pay-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
 }

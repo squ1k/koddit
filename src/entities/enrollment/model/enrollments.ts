@@ -7,7 +7,8 @@ export const enrollments: Enrollment[] = [
     studentId: "s1",
     courseId: "c1",
     status: "active",
-    paid: true
+    paid: true,
+    paidUntil: "2026-04-20"
   },
 
   {
@@ -15,7 +16,8 @@ export const enrollments: Enrollment[] = [
     studentId: "s1",
     courseId: "c2",
     status: "active",
-    paid: false
+    paid: false,
+    paidUntil: undefined
   },
 
   {
@@ -23,7 +25,8 @@ export const enrollments: Enrollment[] = [
     studentId: "s1",
     courseId: "c3",
     status: "completed",
-    paid: true
+    paid: true,
+    paidUntil: "2026-03-30"
   },
 
   {
@@ -31,7 +34,8 @@ export const enrollments: Enrollment[] = [
     studentId: "s2",
     courseId: "c2",
     status: "active",
-    paid: true
+    paid: true,
+    paidUntil: "2026-04-15"
   }
 
 ];

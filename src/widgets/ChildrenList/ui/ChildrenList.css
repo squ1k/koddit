@@ -8,29 +8,264 @@
 }
 
 .children-grid {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
 }
 
 .child-card {
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1rem;
-    background: var(--bg-secondary);
+    border-radius: 18px;
+    background: white;
+    overflow: hidden;
 }
 
-.child-card h4 {
-    margin: 0 0 1rem 0;
-    color: var(--text-primary);
+.child-card-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s;
+}
+
+.child-card-header:hover {
+    background: rgba(126, 115, 255, 0.05);
+}
+
+.child-info h4 {
+    margin: 0 0 4px 0;
+    color: #1a1a1a;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.child-courses-count {
+    font-size: 14px;
+    color: #666;
+}
+
+.expand-icon {
+    font-size: 20px;
+    color: #000000;
+    transition: transform 0.3s;
+    margin-left: 16px;
+}
+
+.child-card.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
+.child-card-content {
+    margin-top: 24px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.child-card.expanded .child-card-content {
+    max-height: 5000px;
+    padding: 0 20px 20px;
+    overflow: visible;
+}
+
+.child-section {
+    margin-bottom: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.child-section:first-of-type {
+    border-top: none;
+    padding-top: 0;
+}
+
+.child-section h5 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+}
+
+.info-label {
+    color: #666;
+    font-size: 14px;
+}
+
+.info-value {
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.balance-value {
+    color: #7737F6;
+    font-weight: 700;
+}
+
+.courses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.course-item {
+    padding: 12px;
+    background: #f8f8f8;
+    border-radius: 8px;
+}
+
+.course-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.course-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.payment-status {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.payment-status.paid {
+    color: #4caf50;
+}
+
+.payment-status.unpaid {
+    color: #b01c1c;
+}
+
+.course-price {
+    font-size: 13px;
+    color: #666;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    background: #f8f8f8;
+    border-radius: 8px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
 }
 
 .child-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
-.child-actions button {
+.action-button {
     flex: 1;
     min-width: 100px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #7737F6, #A956E5);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(119, 55, 246, 0.3);
+}
+
+.no-data {
+    color: #999;
+    font-size: 14px;
+    text-align: center;
+    padding: 12px;
+}
+
+.child-stats-section {
+    padding: 0;
+    border: none;
+}
+
+.child-stats-section .stats-overview {
+    gap: 16px;
+}
+
+.next-lesson {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    background: rgba(126, 115, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.next-lesson-label {
+    font-size: 12px;
+    color: #666;
+}
+
+.next-lesson-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.schedule-day {
+    padding: 12px;
+    background: #f8f8f8;
+    border-radius: 8px;
+}
+
+.day-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.day-lessons {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.lesson-time {
+    font-size: 12px;
+    color: #666;
 }

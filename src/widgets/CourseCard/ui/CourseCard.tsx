@@ -50,10 +50,6 @@ export default function CourseCard({ course, hideProgress }: Props) {
             }}
         >
             <div className="course-card__header">
-                <div className="course-card__icon" aria-hidden>
-                    🎮
-                </div>
-
                 <div className="course-card__title">
                     <div className="course-card__name">{course.title}</div>
                     <div className="course-card__meta">
@@ -84,10 +80,10 @@ export default function CourseCard({ course, hideProgress }: Props) {
 
                 <button
                     type="button"
-                    className="course-card__action"
+                    className="course-card__action course-card__chat-btn"
                     onClick={openTeacherChat}
                 >
-                    💬
+                    Написать учителю
                 </button>
             </div>
         </div>

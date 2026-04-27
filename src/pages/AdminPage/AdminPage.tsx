@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import AppLayout from "@/app/layout/AppLayout";
-import { setPageTitle, useUser } from "@/app/store/store";
+import { useUser, useUsersCount } from "@/app/store/store";
 import { users } from "@/entities/user/model/users";
 import type { User } from "@/shared/types/user";
+import AppLayout from "@/app/layout/AppLayout";
 
 import "./AdminPage.css";
 
@@ -22,13 +22,9 @@ const columns: Array<{
 ];
 
 export default function AdminPage() {
-    useEffect(() => {
-        setPageTitle("Панель управления");
-    }, []);
-
     const user = useUser();
     const navigate = useNavigate();
-
+    const usersCount = useUsersCount();
     const [sortBy, setSortBy] = useState<keyof User>("lastName");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
@@ -51,7 +47,7 @@ export default function AdminPage() {
         });
 
         return sorted;
-    }, [sortBy, sortOrder]);
+    }, [sortBy, sortOrder, usersCount]);
 
     if (!user || user.role !== "Администратор") {
         return null;

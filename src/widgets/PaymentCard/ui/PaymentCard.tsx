@@ -1,34 +1,75 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Enrollment } from "@/shared/types/enrollment";
 import { courses } from "@/entities/course/model/courses";
+import { useUser, useBalance, payForCourse, getLocalEnrollments, subscribe } from "@/app/store/store";
 import "./PaymentCard.css";
 
 interface Props {
-    balance: number;
     enrollments?: Enrollment[];
 }
 
 export default function PaymentCard({
-    balance = 0,
     enrollments = [],
 }: Props) {
     const navigate = useNavigate();
+    const user = useUser();
+    const balance = useBalance();
     const [isExpanded, setIsExpanded] = useState(true);
     const [autoPayment, setAutoPayment] = useState(false);
+    const [processingId, setProcessingId] = useState<string | null>(null);
+    const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+    useEffect(() => {
+        const unsubscribe = subscribe(() => {});
+        return () => { unsubscribe(); };
+    }, []);
 
     const handleTopUp = () => {
         navigate("/wallet/topup");
     };
 
-    const enrollmentDetails = enrollments.map((enrollment) => {
-        const course = courses.find((c) => c.id === enrollment.courseId);
-        return {
-            id: enrollment.id,
-            paid: enrollment.paid,
-            courseName: course?.title ?? "Неизвестный курс",
-        };
-    });
+    const handlePay = async (enrollmentId: string) => {
+        if (!user) return;
+        
+        setProcessingId(enrollmentId);
+        setMessage(null);
+        
+        const result = payForCourse(enrollmentId, user.profileId);
+        
+        setMessage({
+            type: result.success ? "success" : "error",
+            text: result.message
+        });
+        
+        setProcessingId(null);
+        
+        setTimeout(() => setMessage(null), 3000);
+    };
+
+    const enrollmentDetails = useMemo(() => {
+        const localEnrollments = getLocalEnrollments();
+        return enrollments.map((enrollment) => {
+            const course = courses.find((c) => c.id === enrollment.courseId);
+            const localData = localEnrollments[enrollment.id];
+            const isPaid = localData?.paid ?? enrollment.paid;
+            const paidUntil = localData?.paidUntil || enrollment.paidUntil;
+            
+            return {
+                id: enrollment.id,
+                paid: isPaid,
+                paidUntil: paidUntil,
+                courseName: course?.title ?? "Неизвестный курс",
+                price: course?.price ?? 0,
+            };
+        });
+    }, [enrollments]);
+
+    const formatDate = (dateStr: string | undefined) => {
+        if (!dateStr) return "";
+        const date = new Date(dateStr);
+        return date.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+    };
 
     return (
         <div className="payment-card">
@@ -60,6 +101,12 @@ export default function PaymentCard({
                     </label>
                 </div>
 
+                {message && (
+                    <div className={`payment-message ${message.type}`}>
+                        {message.text}
+                    </div>
+                )}
+
                 <div className="balance-topup-row">
                     <div className="balance-section">
                         <span className="balance-label">Баланс:</span>
@@ -82,16 +129,29 @@ export default function PaymentCard({
                                 enrollment.paid ? "paid" : "unpaid"
                             }`}
                         >
-                            <span className="course-name">
-                                {enrollment.courseName}
-                            </span>
-                            <span
-                                className={`course-status ${
-                                    enrollment.paid ? "paid" : "unpaid"
-                                }`}
-                            >
-                                {enrollment.paid ? "Оплачено" : "Не оплачено"}
-                            </span>
+                            <div className="course-info">
+                                <span className="course-name">
+                                    {enrollment.courseName}
+                                </span>
+                                <span className="course-price">
+                                    {enrollment.price}₽/мес
+                                </span>
+                            </div>
+                            <div className="course-actions">
+                                {enrollment.paid && enrollment.paidUntil ? (
+                                    <span className="course-paid-until">
+                                        Оплачено до {formatDate(enrollment.paidUntil)}
+                                    </span>
+                                ) : (
+                                    <button
+                                        className="pay-button"
+                                        onClick={() => handlePay(enrollment.id)}
+                                        disabled={processingId === enrollment.id}
+                                    >
+                                        {processingId === enrollment.id ? "..." : "Оплатить"}
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>

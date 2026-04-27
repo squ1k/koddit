@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { setPageTitle, useUser } from "@/app/store/store";
+import { setPageTitle, useUser, topUpBalance } from "@/app/store/store";
 import { users } from "@/entities/user/model/users";
 import { getParentChildrenIdsByParentId } from "@/entities/parent/model/selectors";
 import AppLayout from "@/app/layout/AppLayout";
@@ -63,21 +63,10 @@ export default function WalletTopUpPage() {
         setIsSubmitting(true);
 
         setTimeout(() => {
-            alert(
-                `Платеж на сумму ${amount}₽ через ${getPaymentMethodName(selectedMethod)} для ${studentUser.firstName} ${studentUser.lastName} успешно обработан!`,
-            );
+            topUpBalance(parseInt(amount, 10));
             setIsSubmitting(false);
             navigate("/profile");
-        }, 1500);
-    };
-
-    const getPaymentMethodName = (method: PaymentMethod): string => {
-        const names: Record<PaymentMethod, string> = {
-            card: "Карту",
-            sbp: "СБП",
-            sberpay: "SberPay",
-        };
-        return names[method];
+        }, 500);
     };
 
     return (

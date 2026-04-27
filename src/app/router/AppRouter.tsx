@@ -12,6 +12,7 @@ import AdminPage from "@/pages/AdminPage";
 import AdminCreateUserPage from "@/pages/AdminPage/CreateUserPage";
 import AdminEnrollUserPage from "@/pages/AdminPage/EnrollUserPage";
 import SchedulePage from "@/pages/SchedulePage";
+import CreateCoursePage from "@/pages/CreateCoursePage/CreateCoursePage";
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
@@ -115,6 +116,15 @@ export default function AppRouter() {
                     element={
                         <ProtectedRoute>
                             <SchedulePage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/course/create"
+                    element={
+                        <ProtectedRoute>
+                            <CreateCoursePage />
                         </ProtectedRoute>
                     }
                 />

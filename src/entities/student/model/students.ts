@@ -35,3 +35,10 @@ export const students: Student[] = [
 export function addStudent(student: Student) {
   students.push(student);
 }
+
+export function updateStudentBalance(studentId: string, newBalance: number) {
+  const student = students.find(s => s.id === studentId);
+  if (student) {
+    student.balance = newBalance;
+  }
+}

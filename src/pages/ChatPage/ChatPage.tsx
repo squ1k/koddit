@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import AppLayout from "@/app/layout/AppLayout";
-import { useUser, setPageTitle } from "@/app/store/store";
+import { useUser, setPageTitle, getChatMessages } from "@/app/store/store";
 import type { User } from "@/shared/types/user";
 import { chats } from "@/entities/chat/model/chats";
-import { messages } from "@/entities/message/model/messages";
 import { users } from "@/entities/user/model/users";
 import ChatList from "./ui/ChatList.tsx";
 import ChatView from "./ui/ChatView.tsx";
@@ -18,6 +17,7 @@ export default function ChatPage() {
     const [selectedChatId, setSelectedChatId] = useState<string | undefined>(
         chatId,
     );
+    const [, setRefreshKey] = useState(0);
 
     useEffect(() => {
         if (!user) {
@@ -47,12 +47,16 @@ export default function ChatPage() {
         navigate("/chat");
     };
 
+    const handleMessageSent = () => {
+        setRefreshKey(k => k + 1);
+    };
+
     const selectedChat = selectedChatId
         ? chats.find((c) => c.id === selectedChatId)
         : undefined;
 
     const chatMessages = selectedChat
-        ? messages.filter((m) => m.chatId === selectedChat.id)
+        ? getChatMessages(selectedChat.id)
         : [];
 
     const getOtherParticipant = (chat: (typeof chats)[0]): User | undefined => {
@@ -83,6 +87,8 @@ export default function ChatPage() {
                             currentUserId={user.id}
                             otherParticipant={getOtherParticipant(selectedChat)}
                             onBack={handleBackToList}
+                            onMessageSent={handleMessageSent}
+                            chatId={selectedChat.id}
                         />
                     ) : (
                         <div className="chat-page__empty">

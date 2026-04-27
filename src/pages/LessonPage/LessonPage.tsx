@@ -6,6 +6,7 @@ import { courses } from "@/entities/course/model/courses";
 import { modules as allModules } from "@/entities/courseModule/model/courseModules";
 import { lessons, tasks, quizzes } from "@/entities/lesson/model/lessons";
 import { users } from "@/entities/user/model/users";
+import { getQuizResultById, getAllQuizResults, saveQuizResult, markContentViewed } from "@/app/store/store";
 import type { Quiz, QuizQuestion } from "@/shared/types/courseModule";
 import "./LessonPage.css";
 
@@ -21,6 +22,39 @@ export default function LessonPage() {
 
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [submitted, setSubmitted] = useState(false);
+    const [existingResult, setExistingResult] = useState<{ correctCount: number; total: number } | null>(null);
+
+    useEffect(() => {
+        if (contentType === "quiz" && contentId) {
+            const result = getQuizResultById(contentId);
+            if (result) {
+                setExistingResult({
+                    correctCount: parseInt(result.correctCount, 10),
+                    total: parseInt(result.total, 10),
+                });
+            }
+        }
+        
+        if (contentId) {
+            markContentViewed(contentId);
+        }
+    }, [contentType, contentId]);
+
+    const allResults = getAllQuizResults();
+    useEffect(() => {
+        if (contentType === "quiz" && contentId) {
+            setExistingResult((prev) => {
+                const newResult = allResults[contentId];
+                if (newResult && (!prev || prev.correctCount !== parseInt(newResult.correctCount))) {
+                    return {
+                        correctCount: parseInt(newResult.correctCount, 10),
+                        total: parseInt(newResult.total, 10),
+                    };
+                }
+                return prev;
+            });
+        }
+    }, [allResults, contentType, contentId]);
 
     const course = courses.find((c) => c.id === courseId);
     const teacher = course ? users.find((u) => u.profileId === course.teacherId) : undefined;
@@ -90,7 +124,7 @@ export default function LessonPage() {
                         className="lesson-page__back"
                         onClick={() => navigate(`/course/${courseId}`)}
                     >
-                        ← Назад к курсу
+                        Назад к курсу
                     </button>
 
                     <div className="lesson-page__header">
@@ -104,6 +138,12 @@ export default function LessonPage() {
 
                     {hasQuestions ? (
                         <div className="quiz-content">
+                            {existingResult && (
+                                <div className="quiz-previous-result">
+                                    Ваш предыдущий результат: {existingResult.correctCount} из {existingResult.total} (
+                                    {Math.round((existingResult.correctCount / existingResult.total) * 100)}%)
+                                </div>
+                            )}
                             {quizContent.questions.map((question: QuizQuestion, qIndex: number) => (
                                 <div key={question.id} className="quiz-question">
                                     <p className="quiz-question__text">
@@ -147,7 +187,16 @@ export default function LessonPage() {
                                     type="button"
                                     className="quiz-submit"
                                     disabled={Object.keys(answers).length !== quizContent.questions.length}
-                                    onClick={() => setSubmitted(true)}
+                                    onClick={() => {
+                                        const correctCount = quizContent.questions.filter(
+                                            (q: QuizQuestion) =>
+                                                q.options.find((o) => o.isCorrect)?.id === answers[q.id]
+                                        ).length;
+                                        setSubmitted(true);
+                                        if (contentId) {
+                                            saveQuizResult(contentId, correctCount, quizContent.questions.length);
+                                        }
+                                    }}
                                 >
                                     Отправить ответы
                                 </button>

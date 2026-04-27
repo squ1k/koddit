@@ -15,6 +15,7 @@ import CourseList from "@/widgets/CourseList/ui";
 import Calendar from "@/widgets/Calendar";
 import PaymentCard from "@/widgets/PaymentCard";
 import ChildrenList from "@/widgets/ChildrenList";
+import StatsOverview from "@/widgets/StatsOverview/ui/StatsOverview";
 import AdminPage from "@/pages/AdminPage";
 import "./ProfilePage.css";
 
@@ -121,7 +122,6 @@ function StudentProfilePage() {
     }
 
     const welcomeData = getWelcomeData(user);
-    const balance = currentStudent?.balance ?? 0;
 
     return (
         <AppLayout>
@@ -160,9 +160,9 @@ function StudentProfilePage() {
                         <>
                             <Calendar lessons={scheduleLessons} />
                             <PaymentCard
-                                balance={balance}
                                 enrollments={studentEnrollments}
                             />
+                            <StatsOverview studentId={currentStudent?.id || ""} />
                         </>
                     )}
 

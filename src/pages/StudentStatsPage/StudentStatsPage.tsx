@@ -119,7 +119,7 @@ export default function StudentStatsPage() {
                         </StatsSection>
 
                         <StatsSection title="Завершенные курсы">
-                            <CompletedCoursesStats courses={completedCourses} />
+                            <CompletedCoursesStats courses={completedCourses} studentId={studentId} />
                         </StatsSection>
 
                         <StatsSection title="Сертификаты">

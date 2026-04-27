@@ -9,6 +9,7 @@ import { addEnrollment } from "@/entities/enrollment/model/enrollments";
 import type { Enrollment } from "@/shared/types/enrollment";
 
 import "./AdminPage.css";
+import "@/widgets/PaymentCard/ui/PaymentCard.css";
 
 export default function EnrollUserPage() {
     const user = useUser();
@@ -74,6 +75,7 @@ export default function EnrollUserPage() {
                         <label>
                             Ученик
                             <select
+                                className="admin-select"
                                 value={studentId}
                                 onChange={(e) => setStudentId(e.target.value)}
                             >
@@ -92,6 +94,7 @@ export default function EnrollUserPage() {
                         <label>
                             Курс
                             <select
+                                className="admin-select"
                                 value={courseId}
                                 onChange={(e) => setCourseId(e.target.value)}
                             >
@@ -107,6 +110,7 @@ export default function EnrollUserPage() {
                         <label>
                             Статус
                             <select
+                                className="admin-select"
                                 value={status}
                                 onChange={(e) =>
                                     setStatus(
@@ -119,13 +123,15 @@ export default function EnrollUserPage() {
                             </select>
                         </label>
 
-                        <label className="admin-form-checkbox">
+                        <label className="payment-toggle-switch">
+                            <span className="payment-toggle__label">Оплачено</span>
                             <input
                                 type="checkbox"
+                                className="payment-toggle__checkbox"
                                 checked={paid}
                                 onChange={(e) => setPaid(e.target.checked)}
                             />
-                            Оплачено
+                            <span className="payment-toggle__switch" />
                         </label>
 
                         <button type="submit" className="admin-submit-button">

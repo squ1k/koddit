@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import AppLayout from "@/app/layout/AppLayout";
-import { setPageTitle, useUser } from "@/app/store/store";
+import { setPageTitle, useUser, incrementUsersCount } from "@/app/store/store";
 import {
     addUser,
     generateProfileId,
@@ -88,6 +88,7 @@ export default function CreateUserPage() {
         };
 
         addUser(newUser);
+        incrementUsersCount();
 
         if (role === "Ученик") {
             addStudent({
@@ -123,14 +124,16 @@ export default function CreateUserPage() {
             <div className="admin-form-page">
                 <div className="admin-form-panel">
                     <h2>Создать нового пользователя</h2>
-                    <form className="admin-form" onSubmit={handleSubmit}>
+                    <form className="admin-form" onSubmit={handleSubmit} autoComplete="off">
                         <label>
                             Роль
                             <select
+                                className="admin-select"
                                 value={role}
                                 onChange={(e) =>
                                     setRole(e.target.value as Role)
                                 }
+                                autoComplete="off"
                             >
                                 {roles.map((item) => (
                                     <option key={item} value={item}>
@@ -146,6 +149,7 @@ export default function CreateUserPage() {
                                 value={firstName}
                                 onChange={(e) => setFirstName(e.target.value)}
                                 required
+                                autoComplete="off"
                             />
                         </label>
 
@@ -155,6 +159,7 @@ export default function CreateUserPage() {
                                 value={lastName}
                                 onChange={(e) => setLastName(e.target.value)}
                                 required
+                                autoComplete="off"
                             />
                         </label>
 
@@ -166,6 +171,7 @@ export default function CreateUserPage() {
                                     setPhone(formatPhoneInput(e.target.value))
                                 }
                                 required
+                                autoComplete="off"
                             />
                         </label>
 
@@ -176,6 +182,7 @@ export default function CreateUserPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
+                                autoComplete="off"
                             />
                         </label>
 
@@ -184,6 +191,7 @@ export default function CreateUserPage() {
                             <input
                                 value={telegram}
                                 onChange={(e) => setTelegram(e.target.value)}
+                                autoComplete="off"
                             />
                         </label>
 
@@ -194,6 +202,7 @@ export default function CreateUserPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                autoComplete="new-password"
                             />
                         </label>
 

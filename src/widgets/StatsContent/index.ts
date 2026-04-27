@@ -4,4 +4,5 @@ export {
     CourseCorrectStats,
     CompletedCoursesStats,
     CertificatesStats,
+    AttendanceStats,
 } from "./ui";

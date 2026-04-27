@@ -200,6 +200,17 @@
     color: #7737F6;
 }
 
+.quiz-previous-result {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 10px;
+    text-align: center;
+    font-size: 15px;
+    color: #16a34a;
+}
+
 .lesson-page__not-found {
     text-align: center;
     color: #666;

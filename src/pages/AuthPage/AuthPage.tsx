@@ -30,21 +30,7 @@ export default function AuthPage() {
             />
             <div className="auth-content">
                 {tab === "login" && (
-                    <>
-                        <LoginForm />
-                        <div className="login-hints">
-                            <h3>Тестовые аккаунты</h3>
-                            <ul>
-                                <li>
-                                    Администратор: +7 999 777-00-01 / admin123
-                                </li>
-                                <li>Учитель: +7 900 111-22-33 / teach123</li>
-                                <li>Учитель: +7 900 888-44-22 / teach123</li>
-                                <li>Родитель: +7 999 555-44-33 / parent123</li>
-                                <li>Родитель: +7 999 222-11-00 / parent123</li>
-                            </ul>
-                        </div>
-                    </>
+                    <LoginForm />
                 )}
 
                 {tab === "register" && (

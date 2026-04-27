@@ -12,7 +12,7 @@
 .course-page__title-block {
     background: rgba(255, 255, 255, 0.8);
     border-radius: 18px;
-    border: 1px solid rgba(126, 115, 255, 0.4);
+    border: none;
     padding: 20px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.05);
 }
@@ -354,6 +354,89 @@
     background: linear-gradient(90deg, #4ecc8e 0%, #229e76 100%);
 }
 
+.course-progress-fill--attendance {
+    background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.course-hours-spent {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(119, 55, 246, 0.08);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #7737F6;
+    text-align: center;
+}
+
+.modules-stats {
+    margin-top: 20px;
+    border-top: 1px solid rgba(126, 115, 255, 0.15);
+    padding-top: 16px;
+}
+
+.modules-stats__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 12px 0;
+}
+
+.module-stat {
+    padding: 12px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.module-stat:last-child {
+    margin-bottom: 0;
+}
+
+.module-stat__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.module-stat__name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.module-stat__attendance {
+    font-size: 12px;
+    color: #666;
+}
+
+.module-stat__progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.module-stat__progress-bar {
+    flex: 1;
+    height: 6px;
+    background: #e5e5e5;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.module-stat__progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7737F6 0%, #A956E5 100%);
+    border-radius: 3px;
+}
+
+.module-stat__progress-text {
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap;
+}
+
 .course-course-status {
     margin-top: 14px;
     color: #444;
@@ -363,6 +446,247 @@
 
 .course-course-status--empty {
     color: #9f9f9f;
+}
+
+.course-schedule {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.course-schedule__slot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid rgba(126, 115, 255, 0.16);
+}
+
+.course-schedule__day {
+    font-weight: 600;
+    color: #333;
+    font-size: 15px;
+}
+
+.course-schedule__time {
+    font-weight: 500;
+    color: #7737F6;
+    font-size: 14px;
+    padding: 6px 12px;
+    background: rgba(119, 55, 246, 0.1);
+    border-radius: 8px;
+}
+
+.course-schedule__empty {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+    font-size: 14px;
+}
+
+.schedule-next-lesson {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #fff;
+    border-radius: 12px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(119, 55, 246, 0.3);
+}
+
+.schedule-next-label {
+    font-weight: 600;
+    color: #7737F6;
+    font-size: 14px;
+}
+
+.schedule-next-date {
+    font-weight: 500;
+    color: #000;
+    font-size: 14px;
+}
+
+.schedule-modules {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.schedule-module {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid rgba(126, 115, 255, 0.2);
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.schedule-module.past {
+    border-color: rgba(126, 115, 255, 0.1);
+}
+
+.schedule-module.current {
+    background: #fff;
+    border-color: #7737F6;
+    box-shadow: 0 4px 20px rgba(119, 55, 246, 0.15);
+}
+
+.schedule-module.collapsed .schedule-module__lessons {
+    display: none;
+}
+
+.schedule-module__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(126, 115, 255, 0.1);
+    cursor: pointer;
+    width: 100%;
+    border: none;
+    text-align: left;
+    font-family: inherit;
+    transition: background 0.2s;
+}
+
+.schedule-module__header:hover {
+    background: rgba(192, 164, 247, 0.1);
+}
+
+.schedule-module.past .schedule-module__header {
+    background: rgba(155, 155, 155, 0.1);
+}
+
+.schedule-module.past .schedule-module__header:hover {
+    background: rgba(69, 69, 69, 0.15);
+}
+
+.schedule-module__right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.schedule-module__toggle {
+    font-size: 12px;
+    color: #000000;
+    transition: transform 0.3s;
+}
+
+.schedule-module__toggle.expanded {
+    transform: rotate(180deg);
+}
+
+.schedule-module__title {
+    font-weight: 600;
+    color: #000;
+    font-size: 15px;
+}
+
+.schedule-module.past .schedule-module__title {
+    color: #666;
+}
+
+.schedule-module.current .schedule-module__title {
+    color: #7737F6;
+}
+
+.schedule-module__dates {
+    font-size: 13px;
+    color: #666;
+    background: rgba(126, 115, 255, 0.08);
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.schedule-module.past .schedule-module__dates {
+    color: #888;
+    background: rgba(67, 67, 67, 0.1);
+}
+
+.schedule-module__lessons {
+    padding: 8px;
+}
+
+.schedule-module__lessons.hidden {
+    display: none;
+}
+
+.schedule-lesson {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    transition: background 0.2s;
+}
+
+.schedule-lesson:last-child {
+    margin-bottom: 0;
+}
+
+.schedule-lesson:hover {
+    background: rgba(119, 55, 246, 0.05);
+}
+
+.schedule-lesson.completed .schedule-lesson__status {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.15);
+}
+
+.schedule-lesson.incomplete.past .schedule-lesson__status {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.schedule-lesson__status {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 600;
+    background: #f0f0f0;
+    color: #999;
+    flex-shrink: 0;
+}
+
+.schedule-lesson__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.schedule-lesson__title {
+    font-size: 14px;
+    color: #000;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.schedule-lesson.past .schedule-lesson__title {
+    color: #666;
+}
+
+.schedule-lesson__date {
+    font-size: 12px;
+    color: #666;
+}
+
+.schedule-lesson.past .schedule-lesson__date {
+    color: #888;
 }
 
 .course-page__empty,

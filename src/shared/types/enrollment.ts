@@ -10,4 +10,6 @@ export interface Enrollment {
 
   paid?: boolean
 
+  paidUntil?: string
+
 }
