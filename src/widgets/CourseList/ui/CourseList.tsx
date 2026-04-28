@@ -1,6 +1,9 @@
 import { useMemo, useState } from "react";
 
-import { getCourseItems } from "@/widgets/CourseList/model/selectors";
+import {
+    getCourseItems,
+    getUpcomingCourseItems,
+} from "@/widgets/CourseList/model/selectors";
 import CourseCard from "@/widgets/CourseCard";
 
 import "./CourseList.css";
