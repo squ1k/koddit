@@ -20,6 +20,8 @@ export default function CourseCard({ course, hideProgress }: Props) {
         navigate(`/course/${course.courseId}`);
     };
 
+    const showTeacherChatButton = !!user && user.role !== "Учитель";
+
     const openTeacherChat = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         event.stopPropagation();
@@ -78,13 +80,15 @@ export default function CourseCard({ course, hideProgress }: Props) {
                     Материалы последнего занятия
                 </button>
 
-                <button
-                    type="button"
-                    className="course-card__action course-card__chat-btn"
-                    onClick={openTeacherChat}
-                >
-                    Написать учителю
-                </button>
+                {showTeacherChatButton && (
+                    <button
+                        type="button"
+                        className="course-card__action course-card__chat-btn"
+                        onClick={openTeacherChat}
+                    >
+                        Написать учителю
+                    </button>
+                )}
             </div>
         </div>
     );

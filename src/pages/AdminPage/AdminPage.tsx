@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { useUser, useUsersCount } from "@/app/store/store";
 import { users } from "@/entities/user/model/users";
+import { courses } from "@/entities/course/model/courses";
 import type { User } from "@/shared/types/user";
 import AppLayout from "@/app/layout/AppLayout";
 
@@ -33,6 +34,24 @@ export default function AdminPage() {
             navigate("/profile", { replace: true });
         }
     }, [user, navigate]);
+
+    const upcomingCourses = useMemo(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return courses
+            .filter((course) => {
+                const startDate = course.startDate
+                    ? new Date(course.startDate)
+                    : null;
+                return (
+                    startDate &&
+                    !Number.isNaN(startDate.getTime()) &&
+                    startDate >= today
+                );
+            })
+            .sort((a, b) => a.startDate.localeCompare(b.startDate));
+    }, []);
 
     const sortedUsers = useMemo(() => {
         const sorted = [...users];
@@ -119,6 +138,47 @@ export default function AdminPage() {
                                     <td>{userItem.telegram}</td>
                                 </tr>
                             ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="admin-table-wrapper">
+                    <div className="admin-table-header">
+                        <span>Предстоящие курсы</span>
+                        <span className="admin-table-meta">
+                            Всего курсов: {upcomingCourses.length}
+                        </span>
+                    </div>
+
+                    <table className="admin-table">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Название</th>
+                                <th>Преподаватель</th>
+                                <th>Дата начала</th>
+                                <th>Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {upcomingCourses.map((course, index) => {
+                                const teacher = users.find(
+                                    (u) => u.profileId === course.teacherId,
+                                );
+                                return (
+                                    <tr key={course.id}>
+                                        <td>{index + 1}</td>
+                                        <td>{course.title}</td>
+                                        <td>
+                                            {teacher
+                                                ? `${teacher.firstName} ${teacher.lastName}`
+                                                : course.teacherId}
+                                        </td>
+                                        <td>{course.startDate}</td>
+                                        <td>{course.price}</td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>

@@ -56,13 +56,13 @@ function StudentProfilePage() {
 
     const scheduleLessons = useMemo(() => {
         const WEEKDAY_MAP: Record<string, number> = {
-            "Понедельник": 0,
-            "Вторник": 1,
-            "Среда": 2,
-            "Четверг": 3,
-            "Пятница": 4,
-            "Суббота": 5,
-            "Воскресенье": 6,
+            Понедельник: 0,
+            Вторник: 1,
+            Среда: 2,
+            Четверг: 3,
+            Пятница: 4,
+            Суббота: 5,
+            Воскресенье: 6,
         };
 
         function getMondayOfWeek(reference: Date, weeksOffset: number): Date {
@@ -93,14 +93,18 @@ function StudentProfilePage() {
 
                 for (let weekOffset = -8; weekOffset <= 4; weekOffset++) {
                     const monday = new Date(currentWeekMonday);
-                    monday.setDate(currentWeekMonday.getDate() + weekOffset * 7);
+                    monday.setDate(
+                        currentWeekMonday.getDate() + weekOffset * 7,
+                    );
 
                     course.schedule.forEach((scheduleItem, scheduleIndex) => {
                         const dayOffset = WEEKDAY_MAP[scheduleItem.day] ?? 0;
                         const lessonDate = new Date(monday);
                         lessonDate.setDate(monday.getDate() + dayOffset);
 
-                        const [hours, minutes] = scheduleItem.time.split(":").map(Number);
+                        const [hours, minutes] = scheduleItem.time
+                            .split(":")
+                            .map(Number);
                         lessonDate.setHours(hours, minutes, 0, 0);
 
                         allLessons.push({
@@ -135,6 +139,27 @@ function StudentProfilePage() {
                         childrenIds={welcomeData.childrenIds}
                     />
 
+                    {user.role === "Учитель" && (
+                        <div className="profile-page__actions">
+                            <button
+                                type="button"
+                                className="profile-page__create-course-btn"
+                                onClick={() => navigate("/course/create")}
+                            >
+                                Создать курс
+                            </button>
+                        </div>
+                    )}
+
+                    {user.role === "Учитель" && (
+                        <CourseList
+                            userId={user.profileId}
+                            role={user.role}
+                            title="Предстоящие курсы"
+                            upcoming
+                        />
+                    )}
+
                     {(user.role === "Ученик" || user.role === "Учитель") && (
                         <>
                             <CourseList
@@ -159,10 +184,10 @@ function StudentProfilePage() {
                     {user.role === "Ученик" && (
                         <>
                             <Calendar lessons={scheduleLessons} />
-                            <PaymentCard
-                                enrollments={studentEnrollments}
+                            <PaymentCard enrollments={studentEnrollments} />
+                            <StatsOverview
+                                studentId={currentStudent?.id || ""}
                             />
-                            <StatsOverview studentId={currentStudent?.id || ""} />
                         </>
                     )}
 

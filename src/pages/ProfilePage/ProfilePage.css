@@ -10,6 +10,26 @@
     gap: 24px;
 }
 
+.profile-page__actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.profile-page__create-course-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #8f3eff 0%, #6236ff 100%);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.profile-page__create-course-btn:hover {
+    opacity: 0.9;
+}
+
 .profile-sidebar {
     display: flex;
     flex-direction: column;

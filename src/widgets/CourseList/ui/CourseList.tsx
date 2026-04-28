@@ -10,6 +10,7 @@ type Props = {
     role: "Ученик" | "Учитель" | "Родитель" | "Администратор";
     status?: "active" | "completed";
     title?: string;
+    upcoming?: boolean;
 };
 
 export default function CourseList({
@@ -17,12 +18,17 @@ export default function CourseList({
     role,
     status = "active",
     title,
+    upcoming = false,
 }: Props) {
     const [isExpanded, setIsExpanded] = useState(true);
 
     const courses = useMemo(() => {
+        if (upcoming) {
+            return getUpcomingCourseItems(role, userId);
+        }
+
         return getCourseItems(role, userId, status);
-    }, [role, userId, status]);
+    }, [role, userId, status, upcoming]);
 
     const headerLabel =
         title ?? (status === "active" ? "Мои курсы" : "Завершённые курсы");

@@ -14,11 +14,20 @@ export type CourseListItem = {
   teacherId?: string;
 };
 
+function getDateStart(course: any) {
+  if (!course.startDate) return null;
+  const date = new Date(course.startDate);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 export function getCourseItems(
   role: User["role"],
   profileId: string,
   status: "active" | "completed" = "active",
 ): CourseListItem[] {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   if (role === "Ученик") {
     return enrollments
       .filter((e) => e.studentId === profileId && e.status === status)
@@ -49,13 +58,18 @@ export function getCourseItems(
     const teacherCourses = courses.filter((c) => c.teacherId === profileId);
 
     if (status === "active") {
-      return teacherCourses.map((c) => ({
-        courseId: c.id,
-        title: c.title,
-        lessonsCount: c.lessonsCount,
-        schedule: c.schedule,
-        teacherId: c.teacherId,
-      }));
+      return teacherCourses
+        .filter((course) => {
+          const startDate = getDateStart(course);
+          return startDate ? startDate <= today : true;
+        })
+        .map((c) => ({
+          courseId: c.id,
+          title: c.title,
+          lessonsCount: c.lessonsCount,
+          schedule: c.schedule,
+          teacherId: c.teacherId,
+        }));
     }
 
     // completed: show courses where at least one student completed it (by enrollment)
@@ -72,6 +86,47 @@ export function getCourseItems(
         title: c.title,
         lessonsCount: c.lessonsCount,
         schedule: c.schedule,
+      }));
+  }
+
+  return [];
+}
+
+export function getUpcomingCourseItems(
+  role: User["role"],
+  profileId: string,
+): CourseListItem[] {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const isUpcoming = (course: any) => {
+    const startDate = getDateStart(course);
+    return startDate ? startDate >= today : false;
+  };
+
+  if (role === "Ученик") {
+    return enrollments
+      .filter((e) => e.studentId === profileId)
+      .map((e) => courses.find((c) => c.id === e.courseId))
+      .filter((course): course is any => Boolean(course) && isUpcoming(course))
+      .map((course) => ({
+        courseId: course.id,
+        title: course.title,
+        lessonsCount: course.lessonsCount,
+        schedule: course.schedule,
+        teacherId: course.teacherId,
+      }));
+  }
+
+  if (role === "Учитель") {
+    return courses
+      .filter((course) => course.teacherId === profileId && isUpcoming(course))
+      .map((course) => ({
+        courseId: course.id,
+        title: course.title,
+        lessonsCount: course.lessonsCount,
+        schedule: course.schedule,
+        teacherId: course.teacherId,
       }));
   }
 
