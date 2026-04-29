@@ -4,6 +4,7 @@ import AppLayout from "@/app/layout/AppLayout";
 import { setPageTitle, useUser } from "@/app/store/store";
 import { courses } from "@/entities/course/model/courses";
 import type { CourseSchedule } from "@/shared/types/courseModule";
+import { RichTextEditor } from "@/shared/ui/RichTextEditor";
 import "./CreateCoursePage.css";
 
 interface ModuleData {
@@ -118,9 +119,16 @@ export default function CreateCoursePage() {
         }
     };
 
-    const updateModule = (index: number, field: string, value: string) => {
+    const updateModule = (
+        index: number,
+        field: "title" | "annotation",
+        value: string,
+    ) => {
         const updated = [...modules];
-        (updated[index] as any)[field] = value;
+        updated[index] = {
+            ...updated[index],
+            [field]: value,
+        };
         setModules(updated);
     };
 
@@ -138,11 +146,15 @@ export default function CreateCoursePage() {
     const updateLesson = (
         moduleIndex: number,
         lessonIndex: number,
-        field: string,
+        field: "title" | "summary" | "content",
         value: string,
     ) => {
         const updated = [...modules];
-        (updated[moduleIndex].lessons[lessonIndex] as any)[field] = value;
+        const lesson = updated[moduleIndex].lessons[lessonIndex];
+        updated[moduleIndex].lessons[lessonIndex] = {
+            ...lesson,
+            [field]: value,
+        };
         setModules(updated);
     };
 
@@ -170,11 +182,20 @@ export default function CreateCoursePage() {
     const updateTask = (
         moduleIndex: number,
         taskIndex: number,
-        field: string,
-        value: any,
+        field:
+            | "title"
+            | "description"
+            | "content"
+            | "hasFileUpload"
+            | "hasTextAnswer",
+        value: string | boolean,
     ) => {
         const updated = [...modules];
-        (updated[moduleIndex].tasks[taskIndex] as any)[field] = value;
+        const task = updated[moduleIndex].tasks[taskIndex];
+        updated[moduleIndex].tasks[taskIndex] = {
+            ...task,
+            [field]: value,
+        };
         setModules(updated);
     };
 
@@ -202,7 +223,11 @@ export default function CreateCoursePage() {
         setModules(updated);
     };
 
-    const updateQuiz = (moduleIndex: number, quizIndex: number, value: any) => {
+    const updateQuiz = (
+        moduleIndex: number,
+        quizIndex: number,
+        value: Partial<QuizData>,
+    ) => {
         const updated = [...modules];
         updated[moduleIndex].quizzes[quizIndex] = {
             ...updated[moduleIndex].quizzes[quizIndex],
@@ -226,13 +251,16 @@ export default function CreateCoursePage() {
         moduleIndex: number,
         quizIndex: number,
         qIndex: number,
-        field: string,
-        value: any,
+        field: "text",
+        value: string,
     ) => {
         const updated = [...modules];
-        (updated[moduleIndex].quizzes[quizIndex].questions[qIndex] as any)[
-            field
-        ] = value;
+        const question =
+            updated[moduleIndex].quizzes[quizIndex].questions[qIndex];
+        updated[moduleIndex].quizzes[quizIndex].questions[qIndex] = {
+            ...question,
+            [field]: value,
+        };
         setModules(updated);
     };
 
@@ -241,15 +269,21 @@ export default function CreateCoursePage() {
         quizIndex: number,
         qIndex: number,
         oIndex: number,
-        field: string,
-        value: any,
+        field: "text" | "isCorrect",
+        value: string | boolean,
     ) => {
         const updated = [...modules];
-        (
+        const option =
             updated[moduleIndex].quizzes[quizIndex].questions[qIndex].options[
                 oIndex
-            ] as any
-        )[field] = value;
+            ];
+
+        updated[moduleIndex].quizzes[quizIndex].questions[qIndex].options[
+            oIndex
+        ] = {
+            ...option,
+            [field]: value,
+        };
         setModules(updated);
     };
 
@@ -278,9 +312,17 @@ export default function CreateCoursePage() {
         setSchedule([...schedule, { day: "Понедельник", time: "12:00" }]);
     };
 
-    const updateSchedule = (index: number, field: string, value: string) => {
+    const updateSchedule = (
+        index: number,
+        field: "day" | "time",
+        value: string,
+    ) => {
         const updated = [...schedule];
-        (updated[index] as any)[field] = value;
+        const slot = updated[index];
+        updated[index] = {
+            ...slot,
+            [field]: value,
+        };
         setSchedule(updated);
     };
 
@@ -538,21 +580,19 @@ export default function CreateCoursePage() {
                                                             }
                                                             placeholder="Краткое описание"
                                                         />
-                                                        <textarea
+                                                        <RichTextEditor
                                                             value={
                                                                 lesson.content
                                                             }
-                                                            onChange={(e) =>
+                                                            onChange={(value) =>
                                                                 updateLesson(
                                                                     moduleIndex,
                                                                     lessonIndex,
                                                                     "content",
-                                                                    e.target
-                                                                        .value,
+                                                                    value,
                                                                 )
                                                             }
-                                                            placeholder="Содержание урока (текст)"
-                                                            rows={4}
+                                                            placeholder="Содержание урока"
                                                         />
                                                         <button
                                                             type="button"
@@ -618,19 +658,17 @@ export default function CreateCoursePage() {
                                                             }
                                                             placeholder="Описание задания"
                                                         />
-                                                        <textarea
+                                                        <RichTextEditor
                                                             value={task.content}
-                                                            onChange={(e) =>
+                                                            onChange={(value) =>
                                                                 updateTask(
                                                                     moduleIndex,
                                                                     taskIndex,
                                                                     "content",
-                                                                    e.target
-                                                                        .value,
+                                                                    value,
                                                                 )
                                                             }
                                                             placeholder="Материалы задания"
-                                                            rows={3}
                                                         />
                                                         <div className="checkbox-group">
                                                             <label>
