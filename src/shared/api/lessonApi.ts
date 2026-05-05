@@ -1,15 +1,14 @@
 import { saveQuizResult } from "@/app/store/store"
 import delay from "./delay"
 
-// API для загрузки файла задания
 export async function uploadTaskFile(taskId: string, studentId: string, file: File): Promise<{
   success: boolean;
   fileUrl: string;
   message: string;
 }> {
-  await delay(2000); // Имитация загрузки файла
+  await delay(2000);
 
-  // В будущем здесь будет загрузка на сервер
+  // Backend integration: Send file to server and store it in database
   // const formData = new FormData();
   // formData.append('file', file);
   // formData.append('taskId', taskId);
@@ -19,8 +18,7 @@ export async function uploadTaskFile(taskId: string, studentId: string, file: Fi
   //   body: formData
   // });
 
-  // Проверка размера файла (имитация)
-  const maxSizeMB = 10; // Максимальный размер файла
+  const maxSizeMB = 10;
   if (file.size > maxSizeMB * 1024 * 1024) {
     return {
       success: false,
@@ -29,7 +27,6 @@ export async function uploadTaskFile(taskId: string, studentId: string, file: Fi
     };
   }
 
-  // Проверка типа файла (имитация)
   const allowedTypes = ['.pdf', '.doc', '.docx', '.txt', '.zip'];
   const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
   if (!allowedTypes.includes(fileExtension)) {
@@ -40,10 +37,7 @@ export async function uploadTaskFile(taskId: string, studentId: string, file: Fi
     };
   }
 
-  // Имитация успешной загрузки
   const fileUrl = `https://storage.example.com/tasks/${taskId}/${studentId}/${file.name}`;
-
-  console.log(`File uploaded for task ${taskId}: ${fileUrl}`);
 
   return {
     success: true,
@@ -52,38 +46,31 @@ export async function uploadTaskFile(taskId: string, studentId: string, file: Fi
   };
 }
 
-// API для отправки ответа на задачу
 export async function submitTaskAnswer(taskId: string, studentId: string, answer: {
   textAnswer?: string;
   fileUrl?: string;
 }): Promise<{ success: boolean; message: string }> {
-  await delay(1000); // Имитация задержки сети
+  await delay(1000);
 
-  // В будущем здесь будет вызов бэкэнда
+  // Backend integration: Send task answer to server for review
   // const response = await fetch('/api/tasks/submit', {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
   //   body: JSON.stringify({ taskId, studentId, answer })
   // });
 
-  console.log(`Submitting task ${taskId} for student ${studentId}:`, answer);
-
-  // Имитация успешной отправки
   return { success: true, message: "Ответ успешно отправлен" };
 }
 
-// API для проверки квиза
 export async function submitQuizAnswers(quizId: string, studentId: string, answers: Record<string, string>): Promise<{
   success: boolean;
   correctCount: number;
   total: number;
   results: Record<string, boolean>;
 }> {
-  await delay(1500); // Имитация задержки проверки
+  await delay(1500);
 
-  console.log(`Checking quiz ${quizId} for student ${studentId}`);
-
-  // В будущем здесь будет вызов бэкэнда для проверки ответов
+  // Backend integration: Submit quiz answers and get automatic verification results
   // const response = await fetch('/api/quizzes/submit', {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
@@ -91,13 +78,11 @@ export async function submitQuizAnswers(quizId: string, studentId: string, answe
   // });
   // const result = await response.json();
 
-  // Имитация проверки (простая логика для демонстрации)
   const mockResults: Record<string, boolean> = {};
   let correctCount = 0;
 
-  // Предполагаем, что правильные ответы известны (в реальности придут с бэкэнда)
   const correctAnswers = {
-    'q1': 'opt1', // Пример правильных ответов
+    'q1': 'opt1',
     'q2': 'opt2',
     'q3': 'opt1'
   };
@@ -110,7 +95,6 @@ export async function submitQuizAnswers(quizId: string, studentId: string, answe
 
   const total = Object.keys(answers).length;
 
-  // Сохраняем результат в store
   saveQuizResult(quizId, correctCount, total);
 
   return {
@@ -121,7 +105,6 @@ export async function submitQuizAnswers(quizId: string, studentId: string, answe
   };
 }
 
-// API для получения результатов квиза
 export async function getQuizResults(quizId: string, studentId: string): Promise<{
   quizId: string;
   correctCount: number;
@@ -130,11 +113,10 @@ export async function getQuizResults(quizId: string, studentId: string): Promise
 } | null> {
   await delay(500);
 
-  console.log(`Loading quiz results for quiz ${quizId}, student ${studentId}`);
+  // Backend integration: Fetch quiz results from server
+  // const response = await fetch(`/api/quizzes/${quizId}/results?studentId=${studentId}`);
+  // const result = await response.json();
 
-  // В будущем: const response = await fetch(`/api/quizzes/${quizId}/results?studentId=${studentId}`);
-
-  // Имитация получения результатов из store
   const { getQuizResult } = await import("@/app/store/store");
   const result = getQuizResult(quizId);
 

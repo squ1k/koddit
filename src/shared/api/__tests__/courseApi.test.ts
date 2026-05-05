@@ -41,7 +41,6 @@ describe('courseApi', () => {
 
       expect(courses).toBeDefined()
       expect(Array.isArray(courses)).toBe(true)
-      // Проверяем, что возвращаются только определенные курсы
       expect(courses.some(c => c.id === 'c1')).toBe(true)
     })
 

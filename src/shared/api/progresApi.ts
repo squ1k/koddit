@@ -5,29 +5,24 @@ export function getProgressByEnrollment(enrollmentId: string) {
   return courseProgress.find(p => p.enrollmentId === enrollmentId)
 }
 
-// API для обновления прогресса курса
 export async function updateCourseProgress(enrollmentId: string, progressData: {
-  progress: number; // Процент завершения (0-100)
-  correctPercent: number; // Процент правильных ответов
-  completedLessons?: string[]; // ID завершенных уроков
-  lastActivity?: string; // Дата последней активности
+  progress: number;
+  correctPercent: number;
+  completedLessons?: string[];
+  lastActivity?: string;
 }): Promise<{ success: boolean; message: string }> {
   await delay(800);
 
-  // В будущем здесь будет вызов бэкэнда
+  // Backend integration: Update student's course progress on server
   // const response = await fetch(`/api/progress/${enrollmentId}`, {
   //   method: 'PUT',
   //   headers: { 'Content-Type': 'application/json' },
   //   body: JSON.stringify(progressData)
   // });
 
-  console.log(`Updating progress for enrollment ${enrollmentId}:`, progressData);
-
-  // Имитация обновления (в реальности данные сохранятся на бэкэнде)
   return { success: true, message: "Прогресс успешно обновлен" };
 }
 
-// API для получения детального прогресса по курсу
 export async function getDetailedProgress(enrollmentId: string): Promise<{
   enrollmentId: string;
   overallProgress: number;
@@ -42,12 +37,13 @@ export async function getDetailedProgress(enrollmentId: string): Promise<{
 } | null> {
   await delay(600);
 
-  // В будущем: const response = await fetch(`/api/progress/${enrollmentId}/detailed`);
+  // Backend integration: Fetch detailed progress breakdown from server
+  // const response = await fetch(`/api/progress/${enrollmentId}/detailed`);
+  // const data = await response.json();
 
   const basicProgress = getProgressByEnrollment(enrollmentId);
   if (!basicProgress) return null;
 
-  // Имитация детального прогресса
   return {
     enrollmentId,
     overallProgress: basicProgress.progress,

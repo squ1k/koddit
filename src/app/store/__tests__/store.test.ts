@@ -15,18 +15,15 @@ import {
   payForCourse
 } from '../store'
 
-// Мокаем useSyncExternalStore
 vi.mock('react', () => ({
   useSyncExternalStore: vi.fn((subscribe, getSnapshot) => getSnapshot())
 }))
 
 describe('store', () => {
   beforeEach(() => {
-    // Очищаем localStorage и sessionStorage перед каждым тестом
     localStorage.clear()
     sessionStorage.clear()
 
-    // Сбрасываем состояние
     logout()
   })
 
@@ -133,14 +130,12 @@ describe('store', () => {
         profileId: 'student1'
       }
 
-      // Устанавливаем начальный баланс в localStorage перед логином
       localStorage.setItem('koddit_balance', JSON.stringify({ 'student1': 100 }))
 
       login(mockUser)
 
       topUpBalance(50)
 
-      // Проверяем, что баланс обновился (через localStorage)
       const storedBalances = JSON.parse(localStorage.getItem('koddit_balance') || '{}')
       expect(storedBalances['student1']).toBe(150)
     })
@@ -156,7 +151,6 @@ describe('store', () => {
         profileId: 's1' // Используем правильный profileId
       }
 
-      // Устанавливаем баланс перед логином (больше цены курса 3000)
       localStorage.setItem('koddit_balance', JSON.stringify({ 's1': 4000 }))
 
       login(mockUser)
@@ -166,9 +160,8 @@ describe('store', () => {
       expect(result.success).toBe(true)
       expect(result.message).toContain('Курс оплачен')
 
-      // Проверяем обновление баланса
       const storedBalances = JSON.parse(localStorage.getItem('koddit_balance') || '{}')
-      expect(storedBalances['s1']).toBe(1000) // 4000 - 3000 = 1000
+      expect(storedBalances['s1']).toBe(1000)
     })
 
     it('should fail payment when insufficient balance', () => {
@@ -180,7 +173,6 @@ describe('store', () => {
         profileId: 's1'
       }
 
-      // Устанавливаем низкий баланс
       localStorage.setItem('koddit_balance', JSON.stringify({ 's1': 10 }))
 
       login(mockUser)
@@ -202,7 +194,6 @@ describe('store', () => {
 
       login(mockUser)
 
-      // Устанавливаем баланс и помечаем курс как оплаченный
       localStorage.setItem('koddit_balance', JSON.stringify({ 's1': 200 }))
       localStorage.setItem('koddit_enrollments', JSON.stringify({
         'e1': { paid: true, paidUntil: '2024-12-31' }

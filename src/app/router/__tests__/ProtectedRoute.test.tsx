@@ -4,7 +4,6 @@ import { MemoryRouter } from "react-router-dom";
 import ProtectedRoute from "../ProtectedRoute";
 import * as store from "@/app/store/store";
 
-// Мокаем useUser хук
 vi.mock("@/app/store/store", () => ({
     useUser: vi.fn(),
 }));

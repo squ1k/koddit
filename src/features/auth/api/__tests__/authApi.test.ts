@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { authApi } from '../authApi'
 
-// Мокаем delay функцию
 vi.mock('@/shared/api/delay', () => ({
   default: vi.fn(() => Promise.resolve())
 }))
@@ -9,7 +8,7 @@ vi.mock('@/shared/api/delay', () => ({
 describe('authApi', () => {
   describe('login', () => {
     it('should login successfully with correct credentials', async () => {
-      const phone = '+7 992 346-65-45' // Используем реальный номер из данных
+      const phone = '+7 992 346-65-45'
       const password = 'pass123'
 
       const result = await authApi.login(phone, password)

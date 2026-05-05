@@ -6,12 +6,10 @@ import {
   getQuizResults
 } from '../lessonApi'
 
-// Мокаем delay функцию
 vi.mock('../delay', () => ({
   default: vi.fn(() => Promise.resolve())
 }))
 
-// Мокаем store
 vi.mock('@/app/store/store', () => ({
   saveQuizResult: vi.fn(),
   getQuizResult: vi.fn(() => ({
@@ -28,7 +26,6 @@ describe('lessonApi', () => {
 
   describe('uploadTaskFile', () => {
     it('should upload file successfully for valid file', async () => {
-      // Создаем mock файл
       const fileContent = 'test content'
       const blob = new Blob([fileContent], { type: 'application/pdf' })
       const mockFile = new File([blob], 'test.pdf', { type: 'application/pdf' })
@@ -41,8 +38,7 @@ describe('lessonApi', () => {
     })
 
     it('should reject file that is too large', async () => {
-      // Создаем большой файл
-      const largeContent = 'x'.repeat(15 * 1024 * 1024) // 15MB
+      const largeContent = 'x'.repeat(15 * 1024 * 1024)
       const blob = new Blob([largeContent], { type: 'application/pdf' })
       const mockFile = new File([blob], 'large.pdf', { type: 'application/pdf' })
 
