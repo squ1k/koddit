@@ -12,7 +12,7 @@
 
 .profile-page__actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .profile-page__create-course-btn {

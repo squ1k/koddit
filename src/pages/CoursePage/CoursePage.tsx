@@ -376,7 +376,7 @@ export default function CoursePage() {
                                 className="course-page__chat-btn"
                                 aria-label="Чат"
                             >
-                                💬 Написать
+                                Написать преподавателю
                             </button>
                         </div>
                     </div>

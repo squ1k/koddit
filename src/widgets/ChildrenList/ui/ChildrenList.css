@@ -20,6 +20,11 @@
     overflow: hidden;
 }
 
+html[data-theme="dark"] .child-card {
+    background: var(--bg-secondary);
+    border-color: var(--border-color-medium);
+}
+
 .child-card-header {
     width: 100%;
     display: flex;
@@ -37,6 +42,10 @@
     background: rgba(126, 115, 255, 0.05);
 }
 
+html[data-theme="dark"] .child-card-header:hover {
+    background: rgba(157, 94, 237, 0.08);
+}
+
 .child-info h4 {
     margin: 0 0 4px 0;
     color: #1a1a1a;
@@ -44,9 +53,17 @@
     font-weight: 600;
 }
 
+html[data-theme="dark"] .child-info h4 {
+    color: var(--text-primary);
+}
+
 .child-courses-count {
     font-size: 14px;
     color: #666;
+}
+
+html[data-theme="dark"] .child-courses-count {
+    color: var(--text-secondary);
 }
 
 .expand-icon {
@@ -54,6 +71,10 @@
     color: #000000;
     transition: transform 0.3s;
     margin-left: 16px;
+}
+
+html[data-theme="dark"] .expand-icon {
+    color: var(--text-primary);
 }
 
 .child-card.expanded .expand-icon {
@@ -77,6 +98,10 @@
     margin-bottom: 20px;
     padding-top: 16px;
     border-top: 1px solid #eee;
+}
+
+html[data-theme="dark"] .child-section {
+    border-top-color: var(--border-color-light);
 }
 
 .child-section:first-of-type {
@@ -209,6 +234,10 @@
     padding: 12px;
 }
 
+html[data-theme="dark"] .no-data {
+    color: var(--text-muted);
+}
+
 .child-stats-section {
     padding: 0;
     border: none;
@@ -228,15 +257,27 @@
     margin-bottom: 12px;
 }
 
+html[data-theme="dark"] .next-lesson {
+    background: rgba(157, 94, 237, 0.12);
+}
+
 .next-lesson-label {
     font-size: 12px;
     color: #666;
+}
+
+html[data-theme="dark"] .next-lesson-label {
+    color: var(--text-secondary);
 }
 
 .next-lesson-value {
     font-size: 14px;
     font-weight: 500;
     color: #333;
+}
+
+html[data-theme="dark"] .next-lesson-value {
+    color: var(--text-primary);
 }
 
 .schedule-grid {
@@ -251,12 +292,20 @@
     border-radius: 8px;
 }
 
+html[data-theme="dark"] .schedule-day {
+    background: var(--bg-surface);
+}
+
 .day-name {
     font-size: 13px;
     font-weight: 600;
     color: #333;
     display: block;
     margin-bottom: 8px;
+}
+
+html[data-theme="dark"] .day-name {
+    color: var(--text-primary);
 }
 
 .day-lessons {

@@ -30,6 +30,20 @@ interface TaskData {
     content: string;
     hasFileUpload: boolean;
     hasTextAnswer: boolean;
+    type: "standard" | "fill-blanks" | "drag-groups";
+    fillBlanks?: FillBlanksData;
+    dragGroups?: DragGroupsData;
+}
+
+interface FillBlanksData {
+    text: string;
+    blanks: { id: string; correctAnswer: string }[];
+    wordBank: string[];
+}
+
+interface DragGroupsData {
+    groups: { id: string; name: string; items: string[] }[];
+    unsortedItems: string[];
 }
 
 interface QuizData {
@@ -166,16 +180,35 @@ export default function CreateCoursePage() {
         setModules(updated);
     };
 
-    const addTask = (moduleIndex: number) => {
+    const addTask = (moduleIndex: number, type: "standard" | "fill-blanks" | "drag-groups" = "standard") => {
         const updated = [...modules];
-        updated[moduleIndex].tasks.push({
+        const newTask: TaskData = {
             id: `t${Date.now()}`,
             title: "",
             description: "",
             content: "",
             hasFileUpload: true,
             hasTextAnswer: true,
-        });
+            type,
+        };
+
+        if (type === "fill-blanks") {
+            newTask.fillBlanks = {
+                text: "",
+                blanks: [],
+                wordBank: [],
+            };
+        } else if (type === "drag-groups") {
+            newTask.dragGroups = {
+                groups: [
+                    { id: `g1`, name: "Группа 1", items: [] },
+                    { id: `g2`, name: "Группа 2", items: [] },
+                ],
+                unsortedItems: [],
+            };
+        }
+
+        updated[moduleIndex].tasks.push(newTask);
         setModules(updated);
     };
 
@@ -187,7 +220,8 @@ export default function CreateCoursePage() {
             | "description"
             | "content"
             | "hasFileUpload"
-            | "hasTextAnswer",
+            | "hasTextAnswer"
+            | "type",
         value: string | boolean,
     ) => {
         const updated = [...modules];
@@ -196,6 +230,223 @@ export default function CreateCoursePage() {
             ...task,
             [field]: value,
         };
+        setModules(updated);
+    };
+
+    const updateFillBlanks = (
+        moduleIndex: number,
+        taskIndex: number,
+        field: "text",
+        value: string,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.fillBlanks) {
+            task.fillBlanks[field] = value;
+        }
+        setModules(updated);
+    };
+
+    const addBlank = (moduleIndex: number, taskIndex: number) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.fillBlanks) {
+            task.fillBlanks.blanks.push({
+                id: `b${Date.now()}`,
+                correctAnswer: "",
+            });
+        }
+        setModules(updated);
+    };
+
+    const updateBlank = (
+        moduleIndex: number,
+        taskIndex: number,
+        blankIndex: number,
+        value: string,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.fillBlanks) {
+            task.fillBlanks.blanks[blankIndex].correctAnswer = value;
+        }
+        setModules(updated);
+    };
+
+    const removeBlank = (
+        moduleIndex: number,
+        taskIndex: number,
+        blankIndex: number,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.fillBlanks) {
+            task.fillBlanks.blanks = task.fillBlanks.blanks.filter(
+                (_, i) => i !== blankIndex,
+            );
+        }
+        setModules(updated);
+    };
+
+    const addWordBankItem = (moduleIndex: number, taskIndex: number) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.fillBlanks) {
+            task.fillBlanks.wordBank.push("");
+        }
+        setModules(updated);
+    };
+
+    const updateWordBankItem = (
+        moduleIndex: number,
+        taskIndex: number,
+        itemIndex: number,
+        value: string,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.fillBlanks) {
+            task.fillBlanks.wordBank[itemIndex] = value;
+        }
+        setModules(updated);
+    };
+
+    const removeWordBankItem = (
+        moduleIndex: number,
+        taskIndex: number,
+        itemIndex: number,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.fillBlanks) {
+            task.fillBlanks.wordBank = task.fillBlanks.wordBank.filter(
+                (_, i) => i !== itemIndex,
+            );
+        }
+        setModules(updated);
+    };
+
+    const addDragGroup = (moduleIndex: number, taskIndex: number) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.dragGroups) {
+            task.dragGroups.groups.push({
+                id: `g${Date.now()}`,
+                name: `Группа ${task.dragGroups.groups.length + 1}`,
+                items: [],
+            });
+        }
+        setModules(updated);
+    };
+
+    const updateDragGroupName = (
+        moduleIndex: number,
+        taskIndex: number,
+        groupIndex: number,
+        value: string,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.dragGroups) {
+            task.dragGroups.groups[groupIndex].name = value;
+        }
+        setModules(updated);
+    };
+
+    const removeDragGroup = (
+        moduleIndex: number,
+        taskIndex: number,
+        groupIndex: number,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.dragGroups && task.dragGroups.groups.length > 1) {
+            task.dragGroups.groups = task.dragGroups.groups.filter(
+                (_, i) => i !== groupIndex,
+            );
+        }
+        setModules(updated);
+    };
+
+    const addDragGroupItem = (
+        moduleIndex: number,
+        taskIndex: number,
+        groupIndex: number,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.dragGroups) {
+            task.dragGroups.groups[groupIndex].items.push("");
+        }
+        setModules(updated);
+    };
+
+    const updateDragGroupItem = (
+        moduleIndex: number,
+        taskIndex: number,
+        groupIndex: number,
+        itemIndex: number,
+        value: string,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.dragGroups) {
+            task.dragGroups.groups[groupIndex].items[itemIndex] = value;
+        }
+        setModules(updated);
+    };
+
+    const removeDragGroupItem = (
+        moduleIndex: number,
+        taskIndex: number,
+        groupIndex: number,
+        itemIndex: number,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.dragGroups) {
+            task.dragGroups.groups[groupIndex].items = task.dragGroups.groups[
+                groupIndex
+            ].items.filter((_, i) => i !== itemIndex);
+        }
+        setModules(updated);
+    };
+
+    const addUnsortedItem = (moduleIndex: number, taskIndex: number) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.dragGroups) {
+            task.dragGroups.unsortedItems.push("");
+        }
+        setModules(updated);
+    };
+
+    const updateUnsortedItem = (
+        moduleIndex: number,
+        taskIndex: number,
+        itemIndex: number,
+        value: string,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.dragGroups) {
+            task.dragGroups.unsortedItems[itemIndex] = value;
+        }
+        setModules(updated);
+    };
+
+    const removeUnsortedItem = (
+        moduleIndex: number,
+        taskIndex: number,
+        itemIndex: number,
+    ) => {
+        const updated = [...modules];
+        const task = updated[moduleIndex].tasks[taskIndex];
+        if (task.dragGroups) {
+            task.dragGroups.unsortedItems = task.dragGroups.unsortedItems.filter(
+                (_, i) => i !== itemIndex,
+            );
+        }
         setModules(updated);
     };
 
@@ -614,14 +865,32 @@ export default function CreateCoursePage() {
                                         <div className="content-section">
                                             <div className="content-header">
                                                 <h5>Задания</h5>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        addTask(moduleIndex)
-                                                    }
-                                                >
-                                                    + Добавить задание
-                                                </button>
+                                                <div className="add-task-buttons">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            addTask(moduleIndex, "standard")
+                                                        }
+                                                    >
+                                                        + Стандартное
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            addTask(moduleIndex, "fill-blanks")
+                                                        }
+                                                    >
+                                                        + Заполнение пропусков
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            addTask(moduleIndex, "drag-groups")
+                                                        }
+                                                    >
+                                                        + Распределение по группам
+                                                    </button>
+                                                </div>
                                             </div>
                                             {module.tasks.map(
                                                 (task, taskIndex) => (
@@ -629,6 +898,25 @@ export default function CreateCoursePage() {
                                                         key={task.id}
                                                         className="content-item"
                                                     >
+                                                        <div className="task-type-selector">
+                                                            <label>Тип задания:</label>
+                                                            <select
+                                                                value={task.type}
+                                                                onChange={(e) =>
+                                                                    updateTask(
+                                                                        moduleIndex,
+                                                                        taskIndex,
+                                                                        "type",
+                                                                        e.target.value as "standard" | "fill-blanks" | "drag-groups",
+                                                                    )
+                                                                }
+                                                            >
+                                                                <option value="standard">Стандартное</option>
+                                                                <option value="fill-blanks">Заполнение пропусков</option>
+                                                                <option value="drag-groups">Распределение по группам</option>
+                                                            </select>
+                                                        </div>
+
                                                         <input
                                                             type="text"
                                                             value={task.title}
@@ -637,85 +925,325 @@ export default function CreateCoursePage() {
                                                                     moduleIndex,
                                                                     taskIndex,
                                                                     "title",
-                                                                    e.target
-                                                                        .value,
+                                                                    e.target.value,
                                                                 )
                                                             }
                                                             placeholder="Название задания"
                                                         />
                                                         <textarea
-                                                            value={
-                                                                task.description
-                                                            }
+                                                            value={task.description}
                                                             onChange={(e) =>
                                                                 updateTask(
                                                                     moduleIndex,
                                                                     taskIndex,
                                                                     "description",
-                                                                    e.target
-                                                                        .value,
+                                                                    e.target.value,
                                                                 )
                                                             }
                                                             placeholder="Описание задания"
                                                         />
-                                                        <RichTextEditor
-                                                            value={task.content}
-                                                            onChange={(value) =>
-                                                                updateTask(
-                                                                    moduleIndex,
-                                                                    taskIndex,
-                                                                    "content",
-                                                                    value,
-                                                                )
-                                                            }
-                                                            placeholder="Материалы задания"
-                                                        />
-                                                        <div className="checkbox-group">
-                                                            <label>
-                                                                <input
-                                                                    type="checkbox"
-                                                                    checked={
-                                                                        task.hasFileUpload
-                                                                    }
-                                                                    onChange={(
-                                                                        e,
-                                                                    ) =>
+
+                                                        {task.type === "standard" && (
+                                                            <>
+                                                                <RichTextEditor
+                                                                    value={task.content}
+                                                                    onChange={(value) =>
                                                                         updateTask(
                                                                             moduleIndex,
                                                                             taskIndex,
-                                                                            "hasFileUpload",
-                                                                            e
-                                                                                .target
-                                                                                .checked,
+                                                                            "content",
+                                                                            value,
                                                                         )
                                                                     }
+                                                                    placeholder="Материалы задания"
                                                                 />
-                                                                Разрешить
-                                                                загрузку файлов
-                                                            </label>
-                                                            <label>
-                                                                <input
-                                                                    type="checkbox"
-                                                                    checked={
-                                                                        task.hasTextAnswer
-                                                                    }
-                                                                    onChange={(
-                                                                        e,
-                                                                    ) =>
-                                                                        updateTask(
+                                                                <div className="checkbox-group">
+                                                                    <label>
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={task.hasFileUpload}
+                                                                            onChange={(e) =>
+                                                                                updateTask(
+                                                                                    moduleIndex,
+                                                                                    taskIndex,
+                                                                                    "hasFileUpload",
+                                                                                    e.target.checked,
+                                                                                )
+                                                                            }
+                                                                        />
+                                                                        Разрешить загрузку файлов
+                                                                    </label>
+                                                                    <label>
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={task.hasTextAnswer}
+                                                                            onChange={(e) =>
+                                                                                updateTask(
+                                                                                    moduleIndex,
+                                                                                    taskIndex,
+                                                                                    "hasTextAnswer",
+                                                                                    e.target.checked,
+                                                                                )
+                                                                            }
+                                                                        />
+                                                                        Разрешить текстовый ответ
+                                                                    </label>
+                                                                </div>
+                                                            </>
+                                                        )}
+
+                                                        {task.type === "fill-blanks" && (
+                                                            <div className="fill-blanks-editor">
+                                                                <h6>Текст с пропусками</h6>
+                                                                <p className="hint-text">
+                                                                    Используйте {'{blank}'} для обозначения пропуска в тексте
+                                                                </p>
+                                                                <textarea
+                                                                    value={task.fillBlanks?.text || ""}
+                                                                    onChange={(e) =>
+                                                                        updateFillBlanks(
                                                                             moduleIndex,
                                                                             taskIndex,
-                                                                            "hasTextAnswer",
-                                                                            e
-                                                                                .target
-                                                                                .checked,
+                                                                            "text",
+                                                                            e.target.value,
                                                                         )
                                                                     }
+                                                                    placeholder="Введите текст задания. Используйте {blank} для пропусков"
+                                                                    rows={4}
                                                                 />
-                                                                Разрешить
-                                                                текстовый ответ
-                                                            </label>
-                                                        </div>
+
+                                                                <div className="blanks-section">
+                                                                    <div className="section-header">
+                                                                        <h6>Правильные ответы для пропусков</h6>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="btn-add-small"
+                                                                            onClick={() =>
+                                                                                addBlank(moduleIndex, taskIndex)
+                                                                            }
+                                                                        >
+                                                                            + Пропуск
+                                                                        </button>
+                                                                    </div>
+                                                                    {task.fillBlanks?.blanks.map((blank, blankIndex) => (
+                                                                        <div key={blank.id} className="blank-item">
+                                                                            <span>Пропуск {blankIndex + 1}:</span>
+                                                                            <input
+                                                                                type="text"
+                                                                                value={blank.correctAnswer}
+                                                                                onChange={(e) =>
+                                                                                    updateBlank(
+                                                                                        moduleIndex,
+                                                                                        taskIndex,
+                                                                                        blankIndex,
+                                                                                        e.target.value,
+                                                                                    )
+                                                                                }
+                                                                                placeholder="Правильный ответ"
+                                                                            />
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn-remove-small"
+                                                                                onClick={() =>
+                                                                                    removeBlank(
+                                                                                        moduleIndex,
+                                                                                        taskIndex,
+                                                                                        blankIndex,
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                ×
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+
+                                                                <div className="word-bank-section">
+                                                                    <div className="section-header">
+                                                                        <h6>Банк слов</h6>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="btn-add-small"
+                                                                            onClick={() =>
+                                                                                addWordBankItem(moduleIndex, taskIndex)
+                                                                            }
+                                                                        >
+                                                                            + Слово
+                                                                        </button>
+                                                                    </div>
+                                                                    {task.fillBlanks?.wordBank.map((word, wordIndex) => (
+                                                                        <div key={wordIndex} className="word-bank-item">
+                                                                            <input
+                                                                                type="text"
+                                                                                value={word}
+                                                                                onChange={(e) =>
+                                                                                    updateWordBankItem(
+                                                                                        moduleIndex,
+                                                                                        taskIndex,
+                                                                                        wordIndex,
+                                                                                        e.target.value,
+                                                                                    )
+                                                                                }
+                                                                                placeholder="Слово для перетаскивания"
+                                                                            />
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn-remove-small"
+                                                                                onClick={() =>
+                                                                                    removeWordBankItem(
+                                                                                        moduleIndex,
+                                                                                        taskIndex,
+                                                                                        wordIndex,
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                ×
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {task.type === "drag-groups" && (
+                                                            <div className="drag-groups-editor">
+                                                                <h6>Группы для распределения</h6>
+                                                                {task.dragGroups?.groups.map((group, groupIndex) => (
+                                                                    <div key={group.id} className="drag-group">
+                                                                        <div className="group-header">
+                                                                            <input
+                                                                                type="text"
+                                                                                value={group.name}
+                                                                                onChange={(e) =>
+                                                                                    updateDragGroupName(
+                                                                                        moduleIndex,
+                                                                                        taskIndex,
+                                                                                        groupIndex,
+                                                                                        e.target.value,
+                                                                                    )
+                                                                                }
+                                                                                placeholder="Название группы"
+                                                                            />
+                                                                            {task.dragGroups && task.dragGroups.groups.length > 1 && (
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className="btn-remove-small"
+                                                                                    onClick={() =>
+                                                                                        removeDragGroup(
+                                                                                            moduleIndex,
+                                                                                            taskIndex,
+                                                                                            groupIndex,
+                                                                                        )
+                                                                                    }
+                                                                                >
+                                                                                    ×
+                                                                                </button>
+                                                                            )}
+                                                                        </div>
+                                                                        <div className="group-items">
+                                                                            {group.items.map((item, itemIndex) => (
+                                                                                <div key={itemIndex} className="group-item">
+                                                                                    <input
+                                                                                        type="text"
+                                                                                        value={item}
+                                                                                        onChange={(e) =>
+                                                                                            updateDragGroupItem(
+                                                                                                moduleIndex,
+                                                                                                taskIndex,
+                                                                                                groupIndex,
+                                                                                                itemIndex,
+                                                                                                e.target.value,
+                                                                                            )
+                                                                                        }
+                                                                                        placeholder="Объект"
+                                                                                    />
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        className="btn-remove-small"
+                                                                                        onClick={() =>
+                                                                                            removeDragGroupItem(
+                                                                                                moduleIndex,
+                                                                                                taskIndex,
+                                                                                                groupIndex,
+                                                                                                itemIndex,
+                                                                                            )
+                                                                                        }
+                                                                                    >
+                                                                                        ×
+                                                                                    </button>
+                                                                                </div>
+                                                                            ))}
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn-add-small"
+                                                                                onClick={() =>
+                                                                                    addDragGroupItem(
+                                                                                        moduleIndex,
+                                                                                        taskIndex,
+                                                                                        groupIndex,
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                + Объект
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn-add-small"
+                                                                    onClick={() =>
+                                                                        addDragGroup(moduleIndex, taskIndex)
+                                                                    }
+                                                                >
+                                                                    + Группа
+                                                                </button>
+
+                                                                <div className="unsorted-section">
+                                                                    <h6>Несортированные объекты</h6>
+                                                                    {task.dragGroups?.unsortedItems.map((item, itemIndex) => (
+                                                                        <div key={itemIndex} className="unsorted-item">
+                                                                            <input
+                                                                                type="text"
+                                                                                value={item}
+                                                                                onChange={(e) =>
+                                                                                    updateUnsortedItem(
+                                                                                        moduleIndex,
+                                                                                        taskIndex,
+                                                                                        itemIndex,
+                                                                                        e.target.value,
+                                                                                    )
+                                                                                }
+                                                                                placeholder="Объект для распределения"
+                                                                            />
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn-remove-small"
+                                                                                onClick={() =>
+                                                                                    removeUnsortedItem(
+                                                                                        moduleIndex,
+                                                                                        taskIndex,
+                                                                                        itemIndex,
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                ×
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn-add-small"
+                                                                        onClick={() =>
+                                                                            addUnsortedItem(moduleIndex, taskIndex)
+                                                                        }
+                                                                    >
+                                                                        + Объект
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
                                                         <button
                                                             type="button"
                                                             className="btn-remove-small"

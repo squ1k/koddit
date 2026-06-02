@@ -14,6 +14,49 @@
   --shadow-lg: 0 8px 12px rgba(119, 55, 246, 0.3);
 }
 
+/* Dark theme overrides */
+html[data-theme="dark"] {
+  --bg-page: #1a1a1a;
+  --bg-secondary: #2d2d3c;
+  --bg-surface: #2a273f;
+  --text-primary: #f0f0f0;
+  --text-secondary: #a0a0a0;
+  --text-muted: #909090;
+  --border-color-light: rgba(157, 94, 237, 0.15);
+  --border-color-medium: rgba(157, 94, 237, 0.25);
+  --border-color-dark: rgba(157, 94, 237, 0.35);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 12px rgba(157, 94, 237, 0.2);
+}
+
+html[data-theme="dark"] body,
+html[data-theme="dark"] body input,
+html[data-theme="dark"] body textarea,
+html[data-theme="dark"] body select,
+html[data-theme="dark"] body button,
+html[data-theme="dark"] body label,
+html[data-theme="dark"] body span,
+html[data-theme="dark"] body p,
+html[data-theme="dark"] body a {
+  color: var(--text-primary);
+}
+
+html[data-theme="dark"] .text-dark {
+  color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .text-muted {
+  color: var(--text-secondary) !important;
+}
+
+.card-custom {
+  background-color: var(--bg-secondary);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+}
+
 .bg-page {
   background-color: var(--bg-page);
 }
@@ -24,6 +67,10 @@
 
 .bg-primary-gradient-135 {
   background: linear-gradient(135deg, var(--bg-page) 0%, #EEF2FF 100%);
+}
+
+html[data-theme="dark"] .bg-primary-gradient-135 {
+  background: linear-gradient(135deg, var(--bg-page) 0%, #3a2d5a 100%);
 }
 
 .text-primary-accent {
@@ -48,6 +95,10 @@
 
 .shadow-purple-glow {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="dark"] .shadow-purple-glow {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 
 .border-purple-light {
@@ -194,32 +245,50 @@
   padding: 20px;
 }
 
+html[data-theme="dark"] .card-custom {
+  background-color: var(--bg-secondary);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
 .tabs-custom {
-  display: flex;
-  justify-content: center;
-  padding: 4px;
-  border-radius: 24px;
-  border: 1px solid var(--primary-accent);
-  background: white;
-  gap: 2px;
-  position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 24px;
+    border: 1px solid var(--primary-accent);
+    background: white;
+    gap: 2px;
+    position: relative;
+}
+
+html[data-theme="dark"] .tabs-custom {
+    background: var(--bg-secondary);
+    border-color: var(--border-color-medium);
 }
 
 .tab-custom {
-  padding: 8px 18px;
-  border: none;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  background: transparent;
-  color: #666;
-  border-radius: 20px;
-  z-index: 2;
-  position: relative;
-  font-weight: 500;
+    padding: 8px 18px;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    background: transparent;
+    color: #666;
+    border-radius: 20px;
+    z-index: 2;
+    position: relative;
+    font-weight: 500;
+}
+
+html[data-theme="dark"] .tab-custom {
+    color: var(--text-secondary);
+}
+
+html[data-theme="dark"] .tab-custom:hover {
+    color: var(--text-primary);
 }
 
 .tab-custom.active {
-  color: white;
+    color: white;
 }
 
 .tabs-indicator {
@@ -239,16 +308,25 @@
 }
 
 .course-card-custom {
-  border-radius: 12px;
-  overflow: hidden;
-  background: white;
-  transition: box-shadow 0.3s, transform 0.3s;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    transition: box-shadow 0.3s, transform 0.3s;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="dark"] .course-card-custom {
+    background: var(--bg-secondary);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .course-card-custom:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+html[data-theme="dark"] .course-card-custom:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
 }
 
 .logo-link-custom {

@@ -43,6 +43,17 @@
   margin-bottom: 8px;
 }
 
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icon img {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
