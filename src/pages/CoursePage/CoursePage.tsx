@@ -2,7 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import AppLayout from "@/app/layout/AppLayout";
-import { useUser, getAllQuizResults, getAllViewedContent } from "@/app/store/store";
+import {
+    useUser,
+    getAllQuizResults,
+    getAllViewedContent,
+} from "@/app/store/store";
 import { courses } from "@/entities/course/model/courses";
 import { modules as allModules } from "@/entities/courseModule/model/courseModules";
 import { lessons, tasks, quizzes } from "@/entities/lesson/model/lessons";
@@ -10,7 +14,10 @@ import { enrollments } from "@/entities/enrollment/model/enrollments";
 import { courseProgress } from "@/entities/progress/model/courseProgress";
 import { users } from "@/entities/user/model/users";
 import { getChatBetweenUsers } from "@/entities/chat/model/selectors";
-import { isLessonAttended, getAttendanceForCourse } from "@/entities/attendance/model/attendance";
+import {
+    isLessonAttended,
+    getAttendanceForCourse,
+} from "@/entities/attendance/model/attendance";
 import Tabs from "@/shared/ui/Tabs/Tabs";
 import { StatsSection } from "@/widgets/StatsContent";
 import "./CoursePage.css";
@@ -47,18 +54,21 @@ export default function CoursePage() {
     const navigate = useNavigate();
 
     const [activeTab, setActiveTab] = useState(TAB_CONTENT);
-    const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
-    const [quizResults, setQuizResults] = useState<Record<string, { correctCount: string; total: string }>>({});
-    const [viewedContent, setViewedContent] = useState<Record<string, boolean>>({});
-    const [expandedScheduleModules, setExpandedScheduleModules] = useState<Set<string>>(new Set());
-
-    useEffect(() => {
-        setQuizResults(getAllQuizResults());
-        setViewedContent(getAllViewedContent());
-    }, [selectedModuleId, activeTab]);
+    const [selectedModuleId, setSelectedModuleId] = useState<string | null>(
+        null,
+    );
+    const [quizResults] = useState<
+        Record<string, { correctCount: string; total: string }>
+    >(() => getAllQuizResults());
+    const [viewedContent] = useState<Record<string, boolean>>(
+        () => getAllViewedContent(),
+    );
+    const [expandedScheduleModules, setExpandedScheduleModules] = useState<
+        Set<string>
+    >(new Set());
 
     const toggleScheduleModule = (moduleId: string) => {
-        setExpandedScheduleModules(prev => {
+        setExpandedScheduleModules((prev) => {
             const newSet = new Set(prev);
             if (newSet.has(moduleId)) {
                 newSet.delete(moduleId);
@@ -100,6 +110,201 @@ export default function CoursePage() {
         return quizzes.filter((q) => lessonIds.includes(q.lessonId));
     }, [selectedModuleId, moduleLessons]);
 
+    // All memos must be declared before any conditional returns
+    const courseQuizzes = useMemo(() => {
+        return quizzes.filter((q) => {
+            const relatedLesson = lessons.find((l) => l.id === q.lessonId);
+            return (
+                relatedLesson &&
+                courseModules.some((m) => m.id === relatedLesson.moduleId)
+            );
+        });
+    }, [courseModules]);
+
+    const completedQuizzes = useMemo(() => {
+        return courseQuizzes.filter((q) => quizResults[q.id]).length;
+    }, [courseQuizzes, quizResults]);
+
+    const totalCorrectAnswers = useMemo(() => {
+        return courseQuizzes.reduce((sum, q) => {
+            const result = quizResults[q.id];
+            if (result) {
+                return sum + parseInt(result.correctCount, 10);
+            }
+            return sum;
+        }, 0);
+    }, [courseQuizzes, quizResults]);
+
+    const totalQuizQuestions = useMemo(() => {
+        return courseQuizzes.reduce((sum, q) => sum + q.questions.length, 0);
+    }, [courseQuizzes]);
+
+    const today = useMemo(() => {
+        const date = new Date();
+        date.setHours(0, 0, 0, 0);
+        return date;
+    }, []);
+
+    const scheduledLessons = useMemo(() => {
+        if (
+            !courseId ||
+            !course ||
+            !course.startDate ||
+            !course.schedule ||
+            course.schedule.length === 0
+        ) {
+            return [];
+        }
+
+        const courseStartDate = new Date(course.startDate);
+        const result: LessonWithDate[] = [];
+        let currentDate = new Date(courseStartDate);
+        const endDate = addDays(today, 60);
+        const lessonsPerModule = Math.ceil(
+            course.lessonsCount / courseModules.length,
+        );
+
+        let lessonNumber = 0;
+
+        while (currentDate <= endDate && result.length < course.lessonsCount) {
+            const dayName = currentDate.toLocaleDateString("ru-RU", {
+                weekday: "long",
+            });
+            const dayMap: Record<string, string> = {
+                понедельник: "Понедельник",
+                вторник: "Вторник",
+                среда: "Среда",
+                четверг: "Четверг",
+                пятница: "Пятница",
+                суббота: "Суббота",
+                воскресенье: "Воскресенье",
+            };
+            const normalizedDay = dayMap[dayName.toLowerCase()] || dayName;
+
+            const scheduleSlot = course.schedule.find(
+                (s) => s.day === normalizedDay,
+            );
+            if (scheduleSlot) {
+                const [hours, minutes] = scheduleSlot.time
+                    .split(":")
+                    .map(Number);
+                const lessonDate = new Date(currentDate);
+                lessonDate.setHours(hours, minutes, 0, 0);
+
+                lessonNumber++;
+                const moduleIndex = Math.floor(
+                    (lessonNumber - 1) / lessonsPerModule,
+                );
+                const module = courseModules[moduleIndex] || courseModules[0];
+
+                result.push({
+                    lessonId: `l${lessonNumber}`,
+                    id: `l${lessonNumber}`,
+                    title: `Урок ${lessonNumber}`,
+                    moduleId: module.id,
+                    moduleTitle: module.title || "Модуль",
+                    date: lessonDate,
+                    isPast: lessonDate < today,
+                    isCompleted: false,
+                });
+            }
+            currentDate = addDays(currentDate, 1);
+        }
+
+        return result;
+    }, [course, courseModules, courseId, today]);
+
+    const modulesStats = useMemo(() => {
+        if (!user || !courseId) return [];
+
+        const courseAttendance = user.profileId
+            ? getAttendanceForCourse(courseId, user.profileId)
+            : [];
+
+        return courseModules.map((module) => {
+            const moduleLessons = scheduledLessons.filter(
+                (l) => l.moduleId === module.id,
+            );
+            const pastModuleLessons = moduleLessons.filter((l) => l.isPast);
+            const pastModuleLessonTitles = new Set(
+                pastModuleLessons.map((l) => l.title),
+            );
+            const moduleAttendance = courseAttendance.filter((a) =>
+                pastModuleLessonTitles.has(a.lessonId),
+            );
+            const moduleAttended = moduleAttendance.filter(
+                (a) => a.attended,
+            ).length;
+            const moduleAttendancePercent =
+                pastModuleLessons.length > 0
+                    ? Math.round(
+                          (moduleAttended / pastModuleLessons.length) * 100,
+                      )
+                    : 0;
+
+            const moduleLessonIds = moduleLessons.map((l) => l.lessonId);
+            const moduleQuizzes = courseQuizzes.filter((q) => {
+                const relatedLesson = lessons.find((l) => l.id === q.lessonId);
+                return (
+                    relatedLesson && moduleLessonIds.includes(relatedLesson.id)
+                );
+            });
+            const completedModuleQuizzes = moduleQuizzes.filter(
+                (q) => quizResults[q.id],
+            ).length;
+            const moduleProgressPercent =
+                moduleQuizzes.length > 0
+                    ? Math.round(
+                          (completedModuleQuizzes / moduleQuizzes.length) * 100,
+                      )
+                    : 0;
+
+            return {
+                id: module.id,
+                title: module.title,
+                totalLessons: moduleLessons.length,
+                attendedLessons: moduleAttended,
+                attendancePercent: moduleAttendancePercent,
+                quizzesCount: moduleQuizzes.length,
+                completedQuizzes: completedModuleQuizzes,
+                progressPercent: moduleProgressPercent,
+            };
+        });
+    }, [
+        courseModules,
+        scheduledLessons,
+        courseQuizzes,
+        quizResults,
+        user,
+        courseId,
+    ]);
+
+    const modulesWithSchedule = useMemo(() => {
+        const nextLesson = scheduledLessons.find((l) => !l.isPast);
+
+        return courseModules.map((module) => {
+            const moduleLessons = scheduledLessons.filter(
+                (l) => l.moduleId === module.id,
+            );
+            const firstLesson = moduleLessons[0];
+            const lastLesson = moduleLessons[moduleLessons.length - 1];
+            const isPast = lastLesson ? lastLesson.isPast : false;
+
+            const isCurrent =
+                nextLesson &&
+                moduleLessons.some((l) => l.lessonId === nextLesson.lessonId);
+
+            return {
+                ...module,
+                lessons: moduleLessons,
+                firstDate: firstLesson?.date,
+                lastDate: lastLesson?.date,
+                isPast,
+                isCurrent,
+            };
+        });
+    }, [courseModules, scheduledLessons]);
+
     useEffect(() => {
         if (courseId) {
             const found = courses.find((c) => c.id === courseId);
@@ -129,185 +334,38 @@ export default function CoursePage() {
         ? courseProgress.find((p) => p.enrollmentId === courseEnrollment.id)
         : undefined;
 
-    const courseQuizzes = useMemo(() => {
-        return quizzes.filter((q) => {
-            const relatedLesson = lessons.find((l) => l.id === q.lessonId);
-            return relatedLesson && courseModules.some((m) => m.id === relatedLesson.moduleId);
-        });
-    }, [courseModules]);
-
-    const completedQuizzes = useMemo(() => {
-        return courseQuizzes.filter((q) => quizResults[q.id]).length;
-    }, [courseQuizzes, quizResults]);
-
-    const totalCorrectAnswers = useMemo(() => {
-        return courseQuizzes.reduce((sum, q) => {
-            const result = quizResults[q.id];
-            if (result) {
-                return sum + parseInt(result.correctCount, 10);
-            }
-            return sum;
-        }, 0);
-    }, [courseQuizzes, quizResults]);
-
-    const totalQuizQuestions = useMemo(() => {
-        return courseQuizzes.reduce((sum, q) => sum + q.questions.length, 0);
-    }, [courseQuizzes]);
-
     const baseProgress = userProgress?.progress ?? 0;
     const baseCorrect = userProgress?.correctPercent ?? 0;
 
-    const quizProgressPercent = courseQuizzes.length > 0 
-        ? Math.round((completedQuizzes / courseQuizzes.length) * 100) 
-        : 0;
-    const quizCorrectPercent = totalQuizQuestions > 0 
-        ? Math.round((totalCorrectAnswers / totalQuizQuestions) * 100) 
-        : 0;
+    const quizProgressPercent =
+        courseQuizzes.length > 0
+            ? Math.round((completedQuizzes / courseQuizzes.length) * 100)
+            : 0;
+    const quizCorrectPercent =
+        totalQuizQuestions > 0
+            ? Math.round((totalCorrectAnswers / totalQuizQuestions) * 100)
+            : 0;
 
-    const progressPercent = completedQuizzes > 0 
-        ? Math.round((baseProgress * (100 - quizProgressPercent) / 100) + quizProgressPercent)
-        : baseProgress;
-    const correctPercent = completedQuizzes > 0
-        ? Math.round((baseCorrect * (100 - quizCorrectPercent) / 100) + quizCorrectPercent)
-        : baseCorrect;
+    const progressPercent =
+        completedQuizzes > 0
+            ? Math.round(
+                  (baseProgress * (100 - quizProgressPercent)) / 100 +
+                      quizProgressPercent,
+              )
+            : baseProgress;
+    const correctPercent =
+        completedQuizzes > 0
+            ? Math.round(
+                  (baseCorrect * (100 - quizCorrectPercent)) / 100 +
+                      quizCorrectPercent,
+              )
+            : baseCorrect;
 
     const tabs = [
         { label: "Содержание", value: TAB_CONTENT },
         { label: "Статистика", value: TAB_STATISTICS },
         { label: "Расписание", value: TAB_SCHEDULE },
-];
-    const courseStartDate = course.startDate ? new Date(course.startDate) : null;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const scheduledLessons = useMemo(() => {
-        if (!courseStartDate || !course.schedule || course.schedule.length === 0) {
-            return [];
-        }
-
-        const result: LessonWithDate[] = [];
-        let currentDate = new Date(courseStartDate);
-        const endDate = addDays(today, 60);
-        const lessonsPerModule = Math.ceil(course.lessonsCount / courseModules.length);
-        
-        let lessonNumber = 0;
-
-        while (currentDate <= endDate && result.length < course.lessonsCount) {
-            const dayName = currentDate.toLocaleDateString("ru-RU", { weekday: "long" });
-            const dayMap: Record<string, string> = {
-                "понедельник": "Понедельник",
-                "вторник": "Вторник",
-                "среда": "Среда",
-                "четверг": "Четверг",
-                "пятница": "Пятница",
-                "суббота": "Суббота",
-                "воскресенье": "Воскресенье",
-            };
-            const normalizedDay = dayMap[dayName.toLowerCase()] || dayName;
-            
-            const scheduleSlot = course.schedule.find(s => s.day === normalizedDay);
-            if (scheduleSlot) {
-                const [hours, minutes] = scheduleSlot.time.split(":").map(Number);
-                const lessonDate = new Date(currentDate);
-                lessonDate.setHours(hours, minutes, 0, 0);
-
-                lessonNumber++;
-                const moduleIndex = Math.floor((lessonNumber - 1) / lessonsPerModule);
-                const module = courseModules[moduleIndex] || courseModules[0];
-                
-                result.push({
-                    lessonId: `l${lessonNumber}`,
-                    id: `l${lessonNumber}`,
-                    title: `Урок ${lessonNumber}`,
-                    moduleId: module.id,
-                    moduleTitle: module.title || "Модуль",
-                    date: lessonDate,
-                    isPast: lessonDate < today,
-                    isCompleted: false,
-                });
-            }
-            currentDate = addDays(currentDate, 1);
-        }
-
-        return result;
-    }, [course, courseStartDate, courseModules]);
-
-    const courseAttendance = user?.profileId ? getAttendanceForCourse(courseId || "", user.profileId) : [];
-    const pastScheduledLessons = scheduledLessons.filter(l => l.isPast);
-    const scheduledLessonTitles = new Set(pastScheduledLessons.map(l => l.title));
-    const attendedLessons = courseAttendance.filter(a => 
-        scheduledLessonTitles.has(a.lessonId) && a.attended
-    ).length;
-    const totalScheduledLessons = pastScheduledLessons.length;
-    const attendancePercent = totalScheduledLessons > 0 
-        ? Math.round((attendedLessons / totalScheduledLessons) * 100) 
-        : 0;
-    
-    const HOURS_PER_LESSON = 1.5;
-    const totalHoursSpent = Math.round(attendedLessons * HOURS_PER_LESSON * 10) / 10;
-
-    const modulesStats = useMemo(() => {
-        return courseModules.map(module => {
-            const moduleLessons = scheduledLessons.filter(l => l.moduleId === module.id);
-            const pastModuleLessons = moduleLessons.filter(l => l.isPast);
-            const pastModuleLessonTitles = new Set(pastModuleLessons.map(l => l.title));
-            const moduleAttendance = courseAttendance.filter(a => 
-                pastModuleLessonTitles.has(a.lessonId)
-            );
-            const moduleAttended = moduleAttendance.filter(a => a.attended).length;
-            const moduleAttendancePercent = pastModuleLessons.length > 0 
-                ? Math.round((moduleAttended / pastModuleLessons.length) * 100)
-                : 0;
-            
-            const moduleLessonIds = moduleLessons.map(l => l.lessonId);
-            const moduleQuizzes = courseQuizzes.filter(q => {
-                const relatedLesson = lessons.find(l => l.id === q.lessonId);
-                return relatedLesson && moduleLessonIds.includes(relatedLesson.id);
-            });
-            const completedModuleQuizzes = moduleQuizzes.filter(q => quizResults[q.id]).length;
-            const moduleProgressPercent = moduleQuizzes.length > 0
-                ? Math.round((completedModuleQuizzes / moduleQuizzes.length) * 100)
-                : 0;
-
-            return {
-                id: module.id,
-                title: module.title,
-                totalLessons: moduleLessons.length,
-                attendedLessons: moduleAttended,
-                attendancePercent: moduleAttendancePercent,
-                quizzesCount: moduleQuizzes.length,
-                completedQuizzes: completedModuleQuizzes,
-                progressPercent: moduleProgressPercent,
-            };
-        });
-    }, [courseModules, scheduledLessons, courseAttendance, courseQuizzes, quizResults]);
-
-    const modulesWithSchedule = useMemo(() => {
-        const nextLesson = scheduledLessons.find(l => !l.isPast);
-        
-        return courseModules.map(module => {
-            const moduleLessons = scheduledLessons.filter(l => l.moduleId === module.id);
-            const firstLesson = moduleLessons[0];
-            const lastLesson = moduleLessons[moduleLessons.length - 1];
-            const isPast = lastLesson ? lastLesson.isPast : false;
-            
-            const isCurrent = nextLesson && moduleLessons.some(l => l.lessonId === nextLesson.lessonId);
-
-            return {
-                ...module,
-                lessons: moduleLessons,
-                firstDate: firstLesson?.date,
-                lastDate: lastLesson?.date,
-                isPast,
-                isCurrent,
-            };
-        }).sort((a, b) => {
-            if (!a.firstDate || !b.firstDate) return 0;
-            return a.firstDate.getTime() - b.firstDate.getTime();
-        });
-    }, [courseModules, scheduledLessons]);
-
-    const nextLesson = scheduledLessons.find(l => !l.isPast);
+    ];
 
     const handleOpenChat = () => {
         if (user && teacher) {
@@ -404,7 +462,8 @@ export default function CoursePage() {
                                             <button
                                                 type="button"
                                                 className={`course-modules__item ${
-                                                    selectedModuleId === module.id
+                                                    selectedModuleId ===
+                                                    module.id
                                                         ? "expanded"
                                                         : ""
                                                 }`}
@@ -436,7 +495,8 @@ export default function CoursePage() {
 
                                             {selectedModuleId === module.id && (
                                                 <div className="module-expand">
-                                                    {moduleLessons.length > 0 && (
+                                                    {moduleLessons.length >
+                                                        0 && (
                                                         <div className="module-section">
                                                             <h4 className="module-section__title">
                                                                 Уроки
@@ -444,7 +504,7 @@ export default function CoursePage() {
                                                             <ul className="module-lessons">
                                                                 {moduleLessons.map(
                                                                     (
-lesson,
+                                                                        lesson,
                                                                     ) => (
                                                                         <button
                                                                             type="button"
@@ -452,11 +512,18 @@ lesson,
                                                                                 lesson.id
                                                                             }
                                                                             className={`module-lesson ${
-                                                                                viewedContent[lesson.id]
+                                                                                viewedContent[
+                                                                                    lesson
+                                                                                        .id
+                                                                                ]
                                                                                     ? "completed"
                                                                                     : ""
                                                                             }`}
-                                                                            onClick={() => handleLessonClick(lesson.id)}
+                                                                            onClick={() =>
+                                                                                handleLessonClick(
+                                                                                    lesson.id,
+                                                                                )
+                                                                            }
                                                                         >
                                                                             <div className="module-lesson__header">
                                                                                 <span className="module-lesson__title">
@@ -466,12 +533,18 @@ lesson,
                                                                                 </span>
                                                                                 <span
                                                                                     className={`module-lesson__attendance ${
-                                                                                        viewedContent[lesson.id]
+                                                                                        viewedContent[
+                                                                                            lesson
+                                                                                                .id
+                                                                                        ]
                                                                                             ? "attended"
                                                                                             : ""
                                                                                     }`}
                                                                                 >
-                                                                                    {viewedContent[lesson.id]
+                                                                                    {viewedContent[
+                                                                                        lesson
+                                                                                            .id
+                                                                                    ]
                                                                                         ? "👁"
                                                                                         : "○"}
                                                                                 </span>
@@ -501,12 +574,16 @@ lesson,
                                                                             key={
                                                                                 task.id
                                                                             }
-className={`module-task ${
+                                                                            className={`module-task ${
                                                                                 task.isCompleted
                                                                                     ? "completed"
                                                                                     : ""
                                                                             }`}
-                                                                        onClick={() => handleTaskClick(task.id)}
+                                                                            onClick={() =>
+                                                                                handleTaskClick(
+                                                                                    task.id,
+                                                                                )
+                                                                            }
                                                                         >
                                                                             <span className="module-task__checkbox">
                                                                                 {task.isCompleted
@@ -525,7 +602,8 @@ className={`module-task ${
                                                         </div>
                                                     )}
 
-                                                    {moduleQuizzes.length > 0 && (
+                                                    {moduleQuizzes.length >
+                                                        0 && (
                                                         <div className="module-section">
                                                             <h4 className="module-section__title">
                                                                 Тесты
@@ -538,21 +616,34 @@ className={`module-task ${
                                                                             key={
                                                                                 quiz.id
                                                                             }
-className={`module-quiz ${
-                                                                                 quiz.isCompleted || quizResults[quiz.id]
-                                                                                     ? "completed"
-                                                                                     : ""
-                                                                             }`}
-                                                                        onClick={() => handleQuizClick(quiz.id)}
+                                                                            className={`module-quiz ${
+                                                                                quiz.isCompleted ||
+                                                                                quizResults[
+                                                                                    quiz
+                                                                                        .id
+                                                                                ]
+                                                                                    ? "completed"
+                                                                                    : ""
+                                                                            }`}
+                                                                            onClick={() =>
+                                                                                handleQuizClick(
+                                                                                    quiz.id,
+                                                                                )
+                                                                            }
                                                                         >
                                                                             <span className="module-quiz__title">
                                                                                 {
                                                                                     quiz.title
                                                                                 }
                                                                             </span>
-<span className="module-quiz__info">
-                                                                                 {quiz.questions.length} вопросов
-                                                                             </span>
+                                                                            <span className="module-quiz__info">
+                                                                                {
+                                                                                    quiz
+                                                                                        .questions
+                                                                                        .length
+                                                                                }{" "}
+                                                                                вопросов
+                                                                            </span>
                                                                         </button>
                                                                     ),
                                                                 )}
@@ -606,7 +697,9 @@ className={`module-quiz ${
                                 <div className="course-progress-bar">
                                     <div
                                         className="course-progress-fill course-progress-fill--attendance"
-                                        style={{ width: `${attendancePercent}%` }}
+                                        style={{
+                                            width: `${attendancePercent}%`,
+                                        }}
                                     />
                                 </div>
                             </div>
@@ -617,22 +710,35 @@ className={`module-quiz ${
 
                             {modulesStats.length > 0 && (
                                 <div className="modules-stats">
-                                    <h4 className="modules-stats__title">Статистика по модулям</h4>
-                                    {modulesStats.map(module => (
-                                        <div key={module.id} className="module-stat">
+                                    <h4 className="modules-stats__title">
+                                        Статистика по модулям
+                                    </h4>
+                                    {modulesStats.map((module) => (
+                                        <div
+                                            key={module.id}
+                                            className="module-stat"
+                                        >
                                             <div className="module-stat__header">
-                                                <span className="module-stat__name">{module.title}</span>
-                                                <span className="module-stat__attendance">{module.attendancePercent}% посещений</span>
+                                                <span className="module-stat__name">
+                                                    {module.title}
+                                                </span>
+                                                <span className="module-stat__attendance">
+                                                    {module.attendancePercent}%
+                                                    посещений
+                                                </span>
                                             </div>
                                             <div className="module-stat__progress">
                                                 <div className="module-stat__progress-bar">
-                                                    <div 
+                                                    <div
                                                         className="module-stat__progress-fill"
-                                                        style={{ width: `${module.progressPercent}%` }}
+                                                        style={{
+                                                            width: `${module.progressPercent}%`,
+                                                        }}
                                                     />
                                                 </div>
                                                 <span className="module-stat__progress-text">
-                                                    {module.completedQuizzes}/{module.quizzesCount} тестов
+                                                    {module.completedQuizzes}/
+                                                    {module.quizzesCount} тестов
                                                 </span>
                                             </div>
                                         </div>
@@ -648,62 +754,138 @@ className={`module-quiz ${
                         <StatsSection title="Расписание курса">
                             {nextLesson && (
                                 <div className="schedule-next-lesson">
-                                    <span className="schedule-next-label">Ближайший урок:</span>
+                                    <span className="schedule-next-label">
+                                        Ближайший урок:
+                                    </span>
                                     <span className="schedule-next-date">
-                                        {nextLesson.date.toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" })} в {nextLesson.date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}
+                                        {nextLesson.date.toLocaleDateString(
+                                            "ru-RU",
+                                            {
+                                                weekday: "long",
+                                                day: "numeric",
+                                                month: "long",
+                                            },
+                                        )}{" "}
+                                        в{" "}
+                                        {nextLesson.date.toLocaleTimeString(
+                                            "ru-RU",
+                                            {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            },
+                                        )}
                                     </span>
                                 </div>
                             )}
 
                             {modulesWithSchedule.length > 0 ? (
                                 <div className="schedule-modules">
-                                    {modulesWithSchedule.map(module => {
-                                        const isExpanded = expandedScheduleModules.has(module.id);
+                                    {modulesWithSchedule.map((module) => {
+                                        const isExpanded =
+                                            expandedScheduleModules.has(
+                                                module.id,
+                                            );
                                         return (
-                                        <div 
-                                            key={module.id} 
-                                            className={`schedule-module ${module.isPast ? "past" : ""} ${module.isCurrent ? "current" : ""} ${!isExpanded ? "collapsed" : ""}`}
-                                        >
-                                            <button
-                                                type="button"
-                                                className="schedule-module__header"
-                                                onClick={() => toggleScheduleModule(module.id)}
+                                            <div
+                                                key={module.id}
+                                                className={`schedule-module ${module.isPast ? "past" : ""} ${module.isCurrent ? "current" : ""} ${!isExpanded ? "collapsed" : ""}`}
                                             >
-                                                <div className="schedule-module__title">{module.title}</div>
-                                                <div className="schedule-module__right">
-                                                    {module.firstDate && module.lastDate && (
-                                                        <div className="schedule-module__dates">
-                                                            {formatDate(module.firstDate)} - {formatDate(module.lastDate)}
-                                                        </div>
-                                                    )}
-                                                    <span className={`schedule-module__toggle ${isExpanded ? "expanded" : ""}`}>
-                                                        ▼
-                                                    </span>
-                                                </div>
-                                            </button>
-                                            <div className={`schedule-module__lessons ${!isExpanded ? "hidden" : ""}`}>
-                                                {module.lessons.map(lesson => {
-                                                    const attended = user?.profileId ? isLessonAttended(lesson.title, user.profileId) : false;
-                                                    const showAttended = lesson.isPast && attended;
-                                                    return (
-                                                    <div 
-                                                        key={lesson.lessonId} 
-                                                        className={`schedule-lesson ${lesson.isPast ? "past" : ""} ${showAttended ? "completed" : ""}`}
-                                                    >
-                                                        <div className="schedule-lesson__status">
-                                                            {showAttended ? "✓" : lesson.isPast && !attended ? "✗" : "○"}
-                                                        </div>
-                                                        <div className="schedule-lesson__info">
-                                                            <span className="schedule-lesson__title">{lesson.title}</span>
-                                                            <span className="schedule-lesson__date">
-                                                                {lesson.date.toLocaleDateString("ru-RU", { weekday: "short", day: "numeric", month: "short" })} в {lesson.date.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}
-                                                            </span>
-                                                        </div>
+                                                <button
+                                                    type="button"
+                                                    className="schedule-module__header"
+                                                    onClick={() =>
+                                                        toggleScheduleModule(
+                                                            module.id,
+                                                        )
+                                                    }
+                                                >
+                                                    <div className="schedule-module__title">
+                                                        {module.title}
                                                     </div>
-                                                );})}
+                                                    <div className="schedule-module__right">
+                                                        {module.firstDate &&
+                                                            module.lastDate && (
+                                                                <div className="schedule-module__dates">
+                                                                    {formatDate(
+                                                                        module.firstDate,
+                                                                    )}{" "}
+                                                                    -{" "}
+                                                                    {formatDate(
+                                                                        module.lastDate,
+                                                                    )}
+                                                                </div>
+                                                            )}
+                                                        <span
+                                                            className={`schedule-module__toggle ${isExpanded ? "expanded" : ""}`}
+                                                        >
+                                                            ▼
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                                <div
+                                                    className={`schedule-module__lessons ${!isExpanded ? "hidden" : ""}`}
+                                                >
+                                                    {module.lessons.map(
+                                                        (lesson) => {
+                                                            const attended =
+                                                                user?.profileId
+                                                                    ? isLessonAttended(
+                                                                          lesson.title,
+                                                                          user.profileId,
+                                                                      )
+                                                                    : false;
+                                                            const showAttended =
+                                                                lesson.isPast &&
+                                                                attended;
+                                                            return (
+                                                                <div
+                                                                    key={
+                                                                        lesson.lessonId
+                                                                    }
+                                                                    className={`schedule-lesson ${lesson.isPast ? "past" : ""} ${showAttended ? "completed" : ""}`}
+                                                                >
+                                                                    <div className="schedule-lesson__status">
+                                                                        {showAttended
+                                                                            ? "✓"
+                                                                            : lesson.isPast &&
+                                                                                !attended
+                                                                              ? "✗"
+                                                                              : "○"}
+                                                                    </div>
+                                                                    <div className="schedule-lesson__info">
+                                                                        <span className="schedule-lesson__title">
+                                                                            {
+                                                                                lesson.title
+                                                                            }
+                                                                        </span>
+                                                                        <span className="schedule-lesson__date">
+                                                                            {lesson.date.toLocaleDateString(
+                                                                                "ru-RU",
+                                                                                {
+                                                                                    weekday:
+                                                                                        "short",
+                                                                                    day: "numeric",
+                                                                                    month: "short",
+                                                                                },
+                                                                            )}{" "}
+                                                                            в{" "}
+                                                                            {lesson.date.toLocaleTimeString(
+                                                                                "ru-RU",
+                                                                                {
+                                                                                    hour: "2-digit",
+                                                                                    minute: "2-digit",
+                                                                                },
+                                                                            )}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        },
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
-                                    );})}
+                                        );
+                                    })}
                                 </div>
                             ) : (
                                 <div className="course-schedule__empty">

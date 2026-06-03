@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { useUser, useUsersCount } from "@/app/store/store";
+import { useUser } from "@/app/store/store";
 import { users } from "@/entities/user/model/users";
 import { courses } from "@/entities/course/model/courses";
 import type { User } from "@/shared/types/user";
@@ -25,7 +25,6 @@ const columns: Array<{
 export default function AdminPage() {
     const user = useUser();
     const navigate = useNavigate();
-    const usersCount = useUsersCount();
     const [sortBy, setSortBy] = useState<keyof User>("lastName");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
@@ -66,7 +65,7 @@ export default function AdminPage() {
         });
 
         return sorted;
-    }, [sortBy, sortOrder, usersCount]);
+    }, [sortBy, sortOrder]);
 
     if (!user || user.role !== "Администратор") {
         return null;
