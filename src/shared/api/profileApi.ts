@@ -1,6 +1,6 @@
-import { studentApi } from "./studentApi"
-import { parentApi } from "./parentApi"
-import { teacherApi } from "./teacherApi"
+import * as studentApi from "./studentApi"
+import * as parentApi from "./parentApi"
+import * as teacherApi from "./teacherApi"
 
 import type { User } from "../types/user"
 
