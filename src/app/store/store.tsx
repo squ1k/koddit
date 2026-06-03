@@ -20,6 +20,7 @@ const VIEWED_CONTENT_KEY = "koddit_viewed_content";
 const LOCAL_BALANCE_KEY = "koddit_balance";
 const LOCAL_ENROLLMENTS_KEY = "koddit_enrollments";
 const SESSION_MESSAGES_KEY = "koddit_session_messages";
+const THEME_KEY = "koddit_theme";
 
 function getStoredQuizResults(): Record<string, QuizResult> {
     try {
@@ -32,7 +33,11 @@ function getStoredQuizResults(): Record<string, QuizResult> {
 
 function saveQuizResult(quizId: string, correctCount: number, total: number) {
     const results = getStoredQuizResults();
-    results[quizId] = { quizId, correctCount: correctCount.toString(), total: total.toString() };
+    results[quizId] = {
+        quizId,
+        correctCount: correctCount.toString(),
+        total: total.toString(),
+    };
     sessionStorage.setItem(QUIZ_RESULTS_KEY, JSON.stringify(results));
     notifyListeners();
 }
@@ -86,7 +91,10 @@ export function getAllLocalBalances(): Record<string, number> {
     }
 }
 
-function getLocalEnrollmentsData(): Record<string, { paid: boolean; paidUntil?: string }> {
+function getLocalEnrollmentsData(): Record<
+    string,
+    { paid: boolean; paidUntil?: string }
+> {
     try {
         const stored = localStorage.getItem(LOCAL_ENROLLMENTS_KEY);
         return stored ? JSON.parse(stored) : {};
@@ -95,13 +103,19 @@ function getLocalEnrollmentsData(): Record<string, { paid: boolean; paidUntil?: 
     }
 }
 
-function setLocalEnrollment(enrollmentId: string, data: { paid: boolean; paidUntil?: string }) {
+function setLocalEnrollment(
+    enrollmentId: string,
+    data: { paid: boolean; paidUntil?: string },
+) {
     const enrollments = getLocalEnrollmentsData();
     enrollments[enrollmentId] = data;
     localStorage.setItem(LOCAL_ENROLLMENTS_KEY, JSON.stringify(enrollments));
 }
 
-export function getLocalEnrollments(): Record<string, { paid: boolean; paidUntil?: string }> {
+export function getLocalEnrollments(): Record<
+    string,
+    { paid: boolean; paidUntil?: string }
+> {
     return getLocalEnrollmentsData();
 }
 
@@ -126,7 +140,23 @@ export function getAllMessages(): Message[] {
 }
 
 export function getChatMessages(chatId: string): Message[] {
-    return getAllMessages().filter(m => m.chatId === chatId);
+    return getAllMessages().filter((m) => m.chatId === chatId);
+}
+
+// Theme management
+export type Theme = "light" | "dark";
+
+function getStoredTheme(): Theme {
+    try {
+        const stored = localStorage.getItem(THEME_KEY);
+        return (stored === "dark" ? "dark" : "light") as Theme;
+    } catch {
+        return "light";
+    }
+}
+
+function setStoredTheme(theme: Theme) {
+    localStorage.setItem(THEME_KEY, theme);
 }
 
 type AppState = {
@@ -135,6 +165,7 @@ type AppState = {
     quizResults: Record<string, QuizResult>;
     balance: number;
     usersCount: number;
+    theme: Theme;
 };
 
 const state: AppState = {
@@ -143,6 +174,7 @@ const state: AppState = {
     quizResults: getStoredQuizResults(),
     balance: 0,
     usersCount: 0,
+    theme: getStoredTheme(),
 };
 
 const listeners = new Set<() => void>();
@@ -158,12 +190,14 @@ function notifyListeners() {
 
 export function subscribe(listener: () => void): () => void {
     listeners.add(listener);
-    return () => { listeners.delete(listener); };
+    return () => {
+        listeners.delete(listener);
+    };
 }
 
 export function login(user: User) {
     state.user = user;
-    const student = students.find(s => s.id === user.profileId);
+    const student = students.find((s) => s.id === user.profileId);
     const localBalances = getAllLocalBalances();
     const localBalance = localBalances[user.profileId];
     state.balance = localBalance ?? student?.balance ?? 0;
@@ -217,20 +251,25 @@ export function topUpBalance(amount: number) {
     notify();
 }
 
-export function payForCourse(enrollmentId: string, studentId: string): { success: boolean; message: string } {
+export function payForCourse(
+    enrollmentId: string,
+    studentId: string,
+): { success: boolean; message: string } {
     const localEnrollments = getLocalEnrollmentsData();
     const currentEnrollment = localEnrollments[enrollmentId];
-    
+
     if (currentEnrollment?.paid) {
         return { success: false, message: "Курс уже оплачен" };
     }
 
-    const enrollment = allEnrollments.find(e => e.id === enrollmentId && e.studentId === studentId);
+    const enrollment = allEnrollments.find(
+        (e) => e.id === enrollmentId && e.studentId === studentId,
+    );
     if (!enrollment) {
         return { success: false, message: "Запись не найдена" };
     }
 
-    const courseData = courses.find(c => c.id === enrollment.courseId);
+    const courseData = courses.find((c) => c.id === enrollment.courseId);
     const price = courseData?.price || 0;
 
     if (state.balance < price) {
@@ -240,16 +279,43 @@ export function payForCourse(enrollmentId: string, studentId: string): { success
     const today = new Date();
     const nextMonth = new Date(today);
     nextMonth.setMonth(nextMonth.getMonth() + 1);
-    const paidUntil = nextMonth.toISOString().split('T')[0];
+    const paidUntil = nextMonth.toISOString().split("T")[0];
 
     state.balance -= price;
     setLocalBalance(studentId, state.balance);
-    
+
     setLocalEnrollment(enrollmentId, { paid: true, paidUntil });
-    
+
     enrollment.paid = true;
     enrollment.paidUntil = paidUntil;
 
     notify();
     return { success: true, message: `Курс оплачен до ${paidUntil}` };
+}
+
+export function useTheme() {
+    return useSyncExternalStore(subscribe, () => state.theme);
+}
+
+export function toggleTheme() {
+    state.theme = state.theme === "light" ? "dark" : "light";
+    setStoredTheme(state.theme);
+    updateThemeOnDOM(state.theme);
+    notify();
+}
+
+export function setTheme(theme: Theme) {
+    state.theme = theme;
+    setStoredTheme(state.theme);
+    updateThemeOnDOM(state.theme);
+    notify();
+}
+
+function updateThemeOnDOM(theme: Theme) {
+    const htmlElement = document.documentElement;
+    if (theme === "dark") {
+        htmlElement.setAttribute("data-theme", "dark");
+    } else {
+        htmlElement.removeAttribute("data-theme");
+    }
 }

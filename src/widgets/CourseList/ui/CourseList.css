@@ -3,7 +3,7 @@
   border-radius: 18px;
   border: 1px solid rgba(126, 115, 255, 0.4);
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--bg-secondary);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.05);
 }
 
@@ -18,7 +18,7 @@
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  color: #1b1b1b;
+  color: var(--text-primary);
 }
 
 .course-list__toggle:focus-visible {
@@ -29,6 +29,13 @@
 .course-list__chevron {
   transition: transform 240ms ease;
   display: inline-flex;
+  color: var(--text-primary);
+}
+
+.course-list__empty {
+  padding: 16px 20px 24px;
+  color: var(--text-secondary);
+  font-size: 14px;
 }
 
 .course-list__chevron.open {

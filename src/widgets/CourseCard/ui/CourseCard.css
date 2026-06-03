@@ -11,10 +11,20 @@
     transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
+html[data-theme="dark"] .course-card {
+    background: var(--bg-secondary);
+    border-color: var(--border-color-light);
+}
+
 .course-card:hover {
     background-color: rgba(126, 115, 255, 0.055);
     box-shadow: 0 4px 12px rgba(126, 115, 255, 0.12);
     transform: translateY(-0.5px);
+}
+
+html[data-theme="dark"] .course-card:hover {
+    background-color: rgba(157, 94, 237, 0.08);
+    box-shadow: 0 4px 12px rgba(157, 94, 237, 0.15);
 }
 
 .course-card:focus-visible {
@@ -39,10 +49,18 @@
     color: #121212;
 }
 
+html[data-theme="dark"] .course-card__name {
+    color: var(--text-primary);
+}
+
 .course-card__meta {
     font-size: 13px;
     color: #6b6b6b;
     margin-top: 2px;
+}
+
+html[data-theme="dark"] .course-card__meta {
+    color: var(--text-secondary);
 }
 
 .course-card__progress-label {
@@ -52,6 +70,10 @@
     text-align: right;
 }
 
+html[data-theme="dark"] .course-card__progress-label {
+    color: var(--text-secondary);
+}
+
 .course-card__progress {
     margin-top: 12px;
     height: 8px;
@@ -59,6 +81,10 @@
     background: rgba(126, 115, 255, 0.16);
     border-radius: 999px;
     overflow: hidden;
+}
+
+html[data-theme="dark"] .course-card__progress {
+    background: rgba(157, 94, 237, 0.2);
 }
 
 .course-card__progress-bar {
@@ -84,6 +110,11 @@
     font-size: 13px;
     cursor: not-allowed;
     opacity: 0.7;
+}
+
+html[data-theme="dark"] .course-card__action {
+    border-color: var(--border-color-medium);
+    color: var(--text-primary);
 }
 
 .course-card__action:disabled {

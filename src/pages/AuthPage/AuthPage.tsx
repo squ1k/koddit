@@ -45,7 +45,7 @@ export default function AuthPage() {
                             <a
                                 href="https://t.me/kontinuumadmin"
                                 target="_blank"
-                                className="me-3"
+                                className="me-3 social-icon"
                                 rel="noopener noreferrer"
                             >
                                 <img
@@ -57,7 +57,7 @@ export default function AuthPage() {
                             <a
                                 href="https://vk.me/vk.koddit"
                                 target="_blank"
-                                className="me-3"
+                                className="me-3 social-icon"
                                 rel="noopener noreferrer"
                             >
                                 <img

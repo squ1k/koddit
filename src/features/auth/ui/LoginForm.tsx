@@ -88,6 +88,7 @@ export default function LoginForm() {
                     value={phone}
                     onChange={handlePhoneChange}
                     disabled={isLoading}
+                    error={!!phoneError}
                 />
 
                 {phoneError && <div className="form-error">{phoneError}</div>}
@@ -100,6 +101,7 @@ export default function LoginForm() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
+                    error={!!passwordError}
                 />
 
                 <button

@@ -20,6 +20,11 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+html[data-theme="dark"] .stats-section {
+    background: var(--bg-secondary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 .stats-section h3 {
     margin: 0 0 16px 0;
     font-size: 18px;
@@ -27,11 +32,19 @@
     color: #1a1a1a;
 }
 
+html[data-theme="dark"] .stats-section h3 {
+    color: var(--text-primary);
+}
+
 .time-on-platform {
     font-size: 16px;
     color: #666;
     margin: 0;
     line-height: 1.6;
+}
+
+html[data-theme="dark"] .time-on-platform {
+    color: var(--text-secondary);
 }
 
 /* Progress List */
@@ -59,10 +72,18 @@
     font-weight: 500;
 }
 
+html[data-theme="dark"] .course-title {
+    color: var(--text-primary);
+}
+
 .progress-percent {
     font-size: 13px;
     color: #999;
     font-weight: 500;
+}
+
+html[data-theme="dark"] .progress-percent {
+    color: var(--text-muted);
 }
 
 .progress-bar {
@@ -70,6 +91,10 @@
     background: #e5e5e5;
     border-radius: 4px;
     overflow: hidden;
+}
+
+html[data-theme="dark"] .progress-bar {
+    background: var(--bg-surface);
 }
 
 .progress-fill {
@@ -112,10 +137,18 @@
     font-weight: 500;
 }
 
+html[data-theme="dark"] .course-name {
+    color: var(--text-primary);
+}
+
 .course-progress-percent {
     font-size: 13px;
     color: #999;
     font-weight: 500;
+}
+
+html[data-theme="dark"] .course-progress-percent {
+    color: var(--text-muted);
 }
 
 /* Certificates */
@@ -144,6 +177,11 @@
     padding: 16px;
 }
 
+html[data-theme="dark"] .certificate-image {
+    background: var(--bg-surface);
+    border-color: var(--border-color-light);
+}
+
 .certificate-image svg {
     width: 100%;
     height: 100%;
@@ -157,6 +195,10 @@
     line-height: 1.4;
 }
 
+html[data-theme="dark"] .certificate-title {
+    color: var(--text-secondary);
+}
+
 .no-data {
     color: #999;
     font-size: 14px;
@@ -165,11 +207,19 @@
     text-align: center;
 }
 
+html[data-theme="dark"] .no-data {
+    color: var(--text-muted);
+}
+
 .placeholder {
     color: #999;
     font-size: 14px;
     text-align: center;
     padding: 40px 20px;
+}
+
+html[data-theme="dark"] .placeholder {
+    color: var(--text-muted);
 }
 
 /* Responsive */

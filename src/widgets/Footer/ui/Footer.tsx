@@ -29,14 +29,14 @@ export default function Footer() {
                     <div className="col-auto">
                         <a 
                             href="https://t.me/kontinuumadmin" target="_blank" 
-                            className="me-3" 
+                            className="me-3 social-icon" 
                             rel="noopener noreferrer"
                         >
                             <img src="/tg.svg" alt="Telegram" style={{ width: '30px', height: '30px' }} />
                         </a>
                         <a 
                             href="https://vk.me/vk.koddit" target="_blank" 
-                            className="me-3" 
+                            className="me-3 social-icon" 
                             rel="noopener noreferrer"
                         >
                             <img src="/vk.svg" alt="VK" style={{ width: '30px', height: '30px' }} />

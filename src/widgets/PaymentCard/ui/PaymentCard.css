@@ -1,5 +1,5 @@
 .payment-card {
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--bg-secondary);
     border-radius: 18px;
     margin-top: 16px;
     border: 1px solid rgba(126, 115, 255, 0.4);
@@ -25,13 +25,13 @@
 .payment-title {
     font-size: 18px;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--text-primary);
 }
 
 .payment-chevron {
     transition: transform 240ms ease;
     display: inline-flex;
-    color: #1a1a1a;
+    color: var(--text-primary);
 }
 
 .payment-chevron.open {
@@ -68,7 +68,7 @@
 .payment-toggle__label {
     font-size: 16px;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .payment-toggle__checkbox {
@@ -96,6 +96,29 @@
     border-radius: 50%;
     transition: transform 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+html[data-theme="dark"] .payment-toggle__switch {
+    background: #4f4f4f;
+}
+
+html[data-theme="dark"] .payment-toggle__switch::after {
+    background: #f1f1f1;
+}
+
+.balance-section {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.course-name {
+    color: var(--text-primary);
+    font-weight: 500;
 }
 
 .payment-toggle__checkbox:checked + .payment-toggle__switch {
