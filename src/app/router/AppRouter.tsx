@@ -17,7 +17,7 @@ import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRouter() {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename="/lk">
             <Routes>
                 <Route path="/" element={<AuthPage />} />
 
