@@ -3,12 +3,17 @@ import "./Footer.css";
 export default function Footer() {
     return (
         <footer>
-            <img className="divider mb-4 mt-4" src="/divider.svg"></img>
+            <img
+                className="divider mb-4 mt-4"
+                src={`${import.meta.env.BASE_URL}divider.svg`}
+            ></img>
             <div className="footer">
-
                 <div className="row align-items-center mb-3">
                     <div className="col-auto">
-                        <a href="https://koddit.ru/leto.html" className="text-decoration-none text-dark">
+                        <a
+                            href="https://koddit.ru/leto.html"
+                            className="text-decoration-none text-dark"
+                        >
                             На главную
                         </a>
                     </div>
@@ -27,26 +32,41 @@ export default function Footer() {
                         </div>
                     </div>
                     <div className="col-auto">
-                        <a 
-                            href="https://t.me/kontinuumadmin" target="_blank" 
-                            className="me-3 social-icon" 
+                        <a
+                            href="https://t.me/kontinuumadmin"
+                            target="_blank"
+                            className="me-3 social-icon"
                             rel="noopener noreferrer"
                         >
-                            <img src="/tg.svg" alt="Telegram" style={{ width: '30px', height: '30px' }} />
+                            <img
+                                src={`${import.meta.env.BASE_URL}tg.svg`}
+                                alt="Telegram"
+                                style={{ width: "30px", height: "30px" }}
+                            />
                         </a>
-                        <a 
-                            href="https://vk.me/vk.koddit" target="_blank" 
-                            className="me-3 social-icon" 
+                        <a
+                            href="https://vk.me/vk.koddit"
+                            target="_blank"
+                            className="me-3 social-icon"
                             rel="noopener noreferrer"
                         >
-                            <img src="/vk.svg" alt="VK" style={{ width: '30px', height: '30px' }} />
+                            <img
+                                src={`${import.meta.env.BASE_URL}vk.svg`}
+                                alt="VK"
+                                style={{ width: "30px", height: "30px" }}
+                            />
                         </a>
-                        <a 
-                            href="https://max.ru/u/f9LHodD0cOI21LXRbIRfETt8k27m_sn_KaiY6x-sGJIGVH-g6qJXvflE62g" target="_blank" 
+                        <a
+                            href="https://max.ru/u/f9LHodD0cOI21LXRbIRfETt8k27m_sn_KaiY6x-sGJIGVH-g6qJXvflE62g"
+                            target="_blank"
                             className="max"
                             rel="noopener noreferrer"
                         >
-                            <img src="/maxwhite.svg" alt="Max" style={{ width: '24px', height: '24px' }} />
+                            <img
+                                src={`${import.meta.env.BASE_URL}maxwhite.svg`}
+                                alt="Max"
+                                style={{ width: "24px", height: "24px" }}
+                            />
                         </a>
                     </div>
                 </div>

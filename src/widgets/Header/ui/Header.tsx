@@ -18,7 +18,11 @@ export default function Header() {
         <header>
             <div className="header-info d-flex justify-content-between align-items-center">
                 <Link to="/profile" className="logo-link">
-                    <img src="/logo.svg" alt="Logo" className="logo"></img>
+                    <img
+                        src={`${import.meta.env.BASE_URL}logo.svg`}
+                        alt="Logo"
+                        className="logo"
+                    ></img>
                 </Link>
 
                 <div className="header-contact-and-theme">
@@ -112,13 +116,19 @@ export default function Header() {
                         <span className="user-role">{user.role}</span>
                     </div>
 
-                    <img className="header-divider" src="/divider-el.svg"></img>
+                    <img
+                        className="header-divider"
+                        src={`${import.meta.env.BASE_URL}divider-el.svg`}
+                    ></img>
 
                     <h1 className="page-title m-0">{title}</h1>
                 </div>
             )}
 
-            <img className="divider mb-4 mt-4" src="/divider.svg"></img>
+            <img
+                className="divider mb-4 mt-4"
+                src={`${import.meta.env.BASE_URL}divider.svg`}
+            ></img>
         </header>
     );
 }

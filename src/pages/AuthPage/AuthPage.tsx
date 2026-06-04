@@ -29,9 +29,7 @@ export default function AuthPage() {
                 onChange={setTab}
             />
             <div className="auth-content">
-                {tab === "login" && (
-                    <LoginForm />
-                )}
+                {tab === "login" && <LoginForm />}
 
                 {tab === "register" && (
                     <div className="register-info">
@@ -49,7 +47,7 @@ export default function AuthPage() {
                                 rel="noopener noreferrer"
                             >
                                 <img
-                                    src="/tg.svg"
+                                    src={`${import.meta.env.BASE_URL}tg.svg`}
                                     alt="Telegram"
                                     style={{ width: "40px", height: "40px" }}
                                 />
@@ -61,7 +59,7 @@ export default function AuthPage() {
                                 rel="noopener noreferrer"
                             >
                                 <img
-                                    src="/vk.svg"
+                                    src={`${import.meta.env.BASE_URL}vk.svg`}
                                     alt="VK"
                                     style={{ width: "40px", height: "40px" }}
                                 />
@@ -74,7 +72,7 @@ export default function AuthPage() {
                                 rel="noopener noreferrer"
                             >
                                 <img
-                                    src="/maxwhite.svg"
+                                    src={`${import.meta.env.BASE_URL}maxwhite.svg`}
                                     alt="Max"
                                     style={{ width: "35px", height: "35px" }}
                                 />
