@@ -60,8 +60,8 @@ export default function CoursePage() {
     const [quizResults] = useState<
         Record<string, { correctCount: string; total: string }>
     >(() => getAllQuizResults());
-    const [viewedContent] = useState<Record<string, boolean>>(
-        () => getAllViewedContent(),
+    const [viewedContent] = useState<Record<string, boolean>>(() =>
+        getAllViewedContent(),
     );
     const [expandedScheduleModules, setExpandedScheduleModules] = useState<
         Set<string>
